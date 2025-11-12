@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesní mapa - Orel Bořitov</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof mermaid !== 'undefined') {
+                mermaid.initialize({ 
+                    startOnLoad: true, 
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: true,
+                        htmlLabels: true
+                    }
+                });
+            } else {
+                console.error('Mermaid se nepodařilo načíst');
+                document.body.innerHTML += '<div style="color: red; padding: 20px; text-align: center;"><h2>Chyba: Mermaid se nepodařilo načíst</h2><p>Zkontrolujte připojení k internetu.</p></div>';
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #8b6914;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8b6914;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .mermaid {
+            text-align: center;
+        }
+        .note {
+            background: #fff4e1;
+            padding: 15px;
+            border-left: 4px solid #8b6914;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Procesní mapa aplikace - Orel Bořitov</h1>
+
+    <div class="note">
+        <strong>Poznámka:</strong> Tento soubor zobrazuje všechny procesní diagramy aplikace. 
+        Pokud se diagramy nezobrazí, zkontrolujte připojení k internetu (načítají se z CDN).
+    </div>
+
+    <h2>1. Hlavní architektura aplikace</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TD
+    A[Spuštění aplikace] --> B[Načtení dat z localStorage]
+    B --> C[Domů - Přehled]
+    C --> D[Registrace hráče]
+    C --> E[Vytvořit soutěž]
+    C --> F[Zadat výsledky]
+    C --> G[Výsledky soutěží]
+    C --> H[Historie hráče]
+    C --> I[Statistiky]
+    C --> J[Správa]
+    
+    D --> K{Kontrola duplicit?}
+    K -->|Stejná kategorie| L[CHYBA]
+    K -->|Jiná kategorie| M[Nabídnout převod]
+    K -->|Žádná duplicita| N[Vytvořit hráče]
+    M --> O{Povolený převod?}
+    O -->|Ano| P[Převést hráče]
+    O -->|Ne| L
+    N --> Q[Vytvořit výsledek]
+    
+    F --> R[Zadat kola]
+    R --> S{Výpočet pořadí}
+    S --> T[Uložit výsledky]
+    
+    T --> U{Uzamknout soutěž?}
+    U -->|Ano| V[Uzamknout s heslem]
+    U -->|Ne| W[Volná úprava]
+        </div>
+    </div>
+
+    <h2>2. Proces: Registrace hráče</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Uživatel otevře Registrovat hráče]) --> Input1[Vyplnit jméno]
+    Input1 --> Input2[Vybrat kategorii]
+    Input2 --> Input3[Vybrat soutěž]
+    Input3 --> Submit[Odeslat formulář]
+    
+    Submit --> Check{Duplicitní jméno?}
+    
+    Check -->|Stejná kategorie| Error1[Zobrazit chybu:<br/>Hráč již existuje]
+    Error1 --> Input1
+    
+    Check -->|Jiná kategorie| Offer[Nabídnout převod hráče]
+    Offer --> Transfer{Povolený převod?}
+    Transfer -->|Chlapci→Muži| Confirm1[Potvrdit převod]
+    Transfer -->|Dívky→Ženy| Confirm1
+    Transfer -->|Ostatní| Error2[Zobrazit chybu:<br/>Převod není povolen]
+    Error2 --> Input1
+    
+    Confirm1 --> Update[Aktualizovat kategorii hráče]
+    Update --> CreateResult[Vytvořit výsledek pro soutěž]
+    CreateResult --> Success1[Úspěch: Hráč převeden]
+    
+    Check -->|Žádná duplicita| Create[Vytvořit nového hráče]
+    Create --> CreateResult2[Vytvořit výsledek<br/>round1=null, round2=null]
+    CreateResult2 --> Success2[Úspěch: Hráč zaregistrován]
+    
+    Success1 --> End([Konec])
+    Success2 --> End
+        </div>
+    </div>
+
+    <h2>3. Proces: Zadávání výsledků</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Uživatel otevře Zadat výsledky]) --> Select1[Vybrat soutěž]
+    Select1 --> Select2[Vybrat kategorii - volitelné]
+    Select2 --> Select3[Vybrat hráče]
+    Select3 --> Input1[Zadat Kolo 1: 0-50 bodů]
+    
+    Input1 --> Validate1{Validní hodnota?}
+    Validate1 -->|Ne| Input1
+    Validate1 -->|Ano| Input2[Zadat Kolo 2: 0-50 bodů]
+    
+    Input2 --> Validate2{Validní hodnota?}
+    Validate2 -->|Ne| Input2
+    Validate2 -->|Ano| Calc[Výpočet: total = round1 + round2]
+    
+    Calc --> CheckLock{Soutěž uzamčena?}
+    CheckLock -->|Ano| Error1[CHYBA: Soutěž je uzamčena]
+    Error1 --> End1([Konec])
+    
+    CheckLock -->|Ne| CheckTie{Shoda na 1-3 místě?}
+    
+    CheckTie -->|Ano| ShowRozstrel[Zobrazit pole pro rozstřel]
+    ShowRozstrel --> Input3[Zadat rozstřel: 0-50 bodů]
+    Input3 --> Save[Uložit výsledky]
+    
+    CheckTie -->|Ne| Save
+    
+    Save --> Recalc[Přepočítat pořadí všech hráčů]
+    Recalc --> Display[Zobrazit aktualizované výsledky]
+    Display --> End2([Konec])
+        </div>
+    </div>
+
+    <h2>4. Proces: Výpočet pořadí</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Spuštění výpočtu pořadí]) --> Load[Načíst všechny výsledky v kategorii]
+    Load --> Sort1[Seřadit podle total sestupně]
+    
+    Sort1 --> Check1{Shoda total?}
+    Check1 -->|Ne| Assign1[Přiřadit umístění 1-3]
+    Check1 -->|Ano| Sort2[Seřadit podle rozstřelu sestupně]
+    
+    Sort2 --> Check2{Shoda total + rozstřel?}
+    Check2 -->|Ne| Assign2[Přiřadit umístění 1-3]
+    Check2 -->|Ano| Check3{Umístění 4+?}
+    
+    Check3 -->|Ano| Sort3[Seřadit podle příjmení abecedně<br/>ignorovat text za čárkou]
+    Sort3 --> Assign3[Přiřadit sdílené umístění<br/>např. 6.-7.]
+    
+    Check3 -->|Ne| Assign4[Přiřadit individuální umístění]
+    
+    Assign1 --> End([Konec])
+    Assign2 --> End
+    Assign3 --> End
+    Assign4 --> End
+        </div>
+    </div>
+
+    <h2>5. Proces: Přechod hráče mezi kategoriemi</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Uživatel v sekci Správa]) --> Select[Vybrat hráče]
+    Select --> Check1{Kategorie hráče?}
+    
+    Check1 -->|Chlapci do 15 let| Show1[Zobrazit tlačítko<br/>Změnit kategorii]
+    Check1 -->|Dívky do 15 let| Show1
+    Check1 -->|Muži od 16 let| Hide1[Skrýt tlačítko]
+    Check1 -->|Ženy od 16 let| Hide1
+    
+    Show1 --> Click[Kliknout Změnit kategorii]
+    Click --> Check2{Povolený převod?}
+    
+    Check2 -->|Chlapci → Muži| Allow[✅ Povoleno]
+    Check2 -->|Dívky → Ženy| Allow
+    Check2 -->|Ostatní| Deny[❌ Zakázáno]
+    
+    Deny --> Error[Zobrazit chybu]
+    Error --> End1([Konec])
+    
+    Allow --> Confirm[Potvrdit převod]
+    Confirm --> Update[Aktualizovat player.category]
+    Update --> Preserve[Zachovat result.categoryAtTime<br/>v existujících výsledcích]
+    Preserve --> Refresh[Obnovit seznamy hráčů]
+    Refresh --> Success[Úspěch: Kategorie změněna]
+    Success --> End2([Konec])
+        </div>
+    </div>
+
+    <h2>6. Proces: Uzamčení soutěže</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> Neuzamceno: Vytvoření soutěže
+    
+    Neuzamceno --> Uzamceno: Uživatel klikne Uzamknout<br/>+ zadá heslo
+    Uzamceno --> Neuzamceno: Uživatel klikne Odemknout<br/>+ zadá správné heslo
+    
+    Neuzamceno --> Neuzamceno: Změna výsledků<br/>Bez omezení
+    Uzamceno --> Uzamceno: Změna výsledků<br/>Vyžaduje heslo
+    
+    note right of Neuzamceno
+        competition.locked = false
+        competition.password = null
+    end note
+    
+    note right of Uzamceno
+        competition.locked = true
+        competition.password = "zadané heslo"
+    end note
+        </div>
+    </div>
+
+    <h2>7. Proces: Validace při změně výsledků</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Uživatel chce změnit výsledek]) --> Check{isCompetitionLocked?}
+    
+    Check -->|false| Allow[Povolit změnu]
+    Allow --> Save[Uložit změny]
+    Save --> End1([Konec])
+    
+    Check -->|true| Prompt[Vyžadovat heslo]
+    Prompt --> Input[Uživatel zadá heslo]
+    Input --> Validate{heslo === competition.password?}
+    
+    Validate -->|Ano| Allow
+    Validate -->|Ne| Error[Zobrazit chybu:<br/>Nesprávné heslo]
+    Error --> End2([Konec])
+        </div>
+    </div>
+
+    <h2>8. Proces: Generování PDF</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Uživatel klikne Export PDF]) --> Select[Vybrat soutěž]
+    Select --> Build[Vytvořit HTML obsah]
+    
+    Build --> Header[Přidat hlavičku soutěže]
+    Header --> Categories[Přidat tabulky podle kategorií]
+    Categories --> Winner[Přidat absolutního vítěze]
+    
+    Winner --> CSS[Přidat CSS pro tisk:<br/>page-break-inside: avoid]
+    CSS --> Convert[html2canvas:<br/>Konverze HTML → obrázek]
+    Convert --> PDF[jsPDF:<br/>Generování PDF]
+    PDF --> Download[Stáhnout soubor]
+    Download --> End([Konec])
+        </div>
+    </div>
+
+    <h2>9. Datový tok aplikace</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph LR
+    A[Formulář] --> B[Validace]
+    B --> C[Storage API]
+    C --> D[localStorage]
+    D --> C
+    C --> E[Výpočet pořadí]
+    E --> F[Zobrazení UI]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#e8f5e9
+    style D fill:#f3e5f5
+    style E fill:#fff4e1
+    style F fill:#e1f5ff
+        </div>
+    </div>
+
+    <h2>10. Kompletní workflow: Od registrace po výsledky</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+sequenceDiagram
+    participant U as Uživatel
+    participant R as Registrace
+    participant S as Storage
+    participant Z as Zadávání
+    participant V as Výpočet
+    participant W as Zobrazení
+    
+    U->>R: Registruje hráče
+    R->>S: Kontrola duplicit
+    S-->>R: Výsledek kontroly
+    R->>S: Uložit hráče
+    R->>S: Vytvořit výsledek
+    
+    U->>Z: Otevře Zadávání výsledků
+    Z->>S: Načíst hráče a soutěže
+    S-->>Z: Data
+    
+    U->>Z: Zadat kola 1 a 2
+    Z->>S: Kontrola uzamčení
+    S-->>Z: Status
+    
+    U->>Z: Zadat rozstřel (pokud potřeba)
+    Z->>S: Uložit výsledky
+    S->>V: Spustit přepočet
+    V->>V: Seřadit podle total
+    V->>V: Seřadit podle rozstřelu
+    V->>V: Seřadit podle příjmení
+    V->>S: Uložit pořadí
+    
+    U->>W: Otevře Výsledky
+    W->>S: Načíst výsledky
+    S-->>W: Seřazené výsledky
+    W-->>U: Zobrazit výsledky
+        </div>
+    </div>
+
+    <h2>11. Struktura dat</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+classDiagram
+    class Player {
+        +string id
+        +string name
+        +Category category
+        +Date createdAt
+    }
+    
+    class Competition {
+        +string id
+        +number year
+        +CompetitionType type
+        +Date date
+        +boolean locked
+        +string password
+    }
+    
+    class Result {
+        +string id
+        +string playerId
+        +string competitionId
+        +number round1
+        +number round2
+        +number rozstrel
+        +number total
+        +Category categoryAtTime
+        +Date createdAt
+    }
+    
+    Player "1" --> "*" Result : má
+    Competition "1" --> "*" Result : obsahuje
+    
+    note for Result "total = round1 + round2\nrozstrel se nepřičítá"
+    note for Result "categoryAtTime zachovává\nkategorii z doby soutěže"
+        </div>
+    </div>
+
+    <h2>12. Pravidla a omezení - rozhodovací strom</h2>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    Start([Akce uživatele]) --> Type{Typ akce?}
+    
+    Type -->|Registrace| Reg{Duplicitní jméno?}
+    Reg -->|Stejná kat.| Error1[❌ CHYBA]
+    Reg -->|Jiná kat.| Transfer{Povolený převod?}
+    Transfer -->|Chlapci→Muži| OK1[✅ Povoleno]
+    Transfer -->|Dívky→Ženy| OK1
+    Transfer -->|Ostatní| Error2[❌ Zakázáno]
+    Reg -->|Žádná| OK2[✅ Vytvořit]
+    
+    Type -->|Změna výsledků| Lock{Soutěž uzamčena?}
+    Lock -->|Ne| OK3[✅ Povolit]
+    Lock -->|Ano| Pass{Správné heslo?}
+    Pass -->|Ano| OK3
+    Pass -->|Ne| Error3[❌ Odmítnout]
+    
+    Type -->|Změna kategorie| Cat{Povolený převod?}
+    Cat -->|Chlapci→Muži| OK4[✅ Povolit]
+    Cat -->|Dívky→Ženy| OK4
+    Cat -->|Ostatní| Error4[❌ Zakázáno]
+    
+    OK1 --> End([Konec])
+    OK2 --> End
+    OK3 --> End
+    OK4 --> End
+    Error1 --> End
+    Error2 --> End
+    Error3 --> End
+    Error4 --> End
+        </div>
+    </div>
+
+    <div class="note" style="margin-top: 40px;">
+        <strong>Tip:</strong> Tento soubor můžete otevřít v jakémkoli prohlížeči. 
+        Diagramy se načítají automaticky z internetu. Pokud potřebujete diagramy offline, 
+        můžete použít VS Code s rozšířením "Markdown Preview Mermaid Support" a otevřít soubor PROCESNI_MAPA.md.
+    </div>
+
+</body>
+</html>
+

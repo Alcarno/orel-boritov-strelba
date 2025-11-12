@@ -1,0 +1,3833 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orel Bořitov - Střelba ze vzduchovek</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #daa520 0%, #cd853f 50%, #8b6914 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            height: 90px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .main-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 600;
+            background-color: rgba(139, 105, 20, 0.6);
+            border: 1px solid rgba(139, 105, 20, 0.8);
+        }
+
+        .main-nav a:hover {
+            background-color: rgba(139, 105, 20, 0.8);
+            border-color: rgba(139, 105, 20, 1);
+            transform: translateY(-1px);
+        }
+
+        .app-main {
+            flex: 1;
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow: visible;
+        }
+
+        .card h2 {
+            margin-bottom: 1.5rem;
+            color: #8b6914;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #daa520;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #daa520 0%, #cd853f 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(218, 165, 32, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-gold {
+            background-color: #ffd700;
+            color: #333;
+        }
+
+        .badge-silver {
+            background-color: #c0c0c0;
+            color: #333;
+        }
+
+        .badge-bronze {
+            background-color: #cd7f32;
+            color: white;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #daa520 0%, #cd853f 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+
+        .stat-card.clickable {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card.clickable:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1.5rem;
+            color: #8b6914;
+        }
+
+        .modal-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-inputs .form-group {
+            margin-bottom: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Mobile Navigation Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: rgba(139, 105, 20, 0.8);
+            border: 1px solid rgba(139, 105, 20, 1);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .main-nav.mobile-hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .app-header {
+                padding: 1rem 0;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                height: 60px;
+            }
+
+            .app-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .main-nav {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+                display: none;
+            }
+
+            .main-nav:not(.mobile-hidden) {
+                display: flex;
+            }
+
+            .main-nav a {
+                width: 100%;
+                text-align: center;
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+
+            .app-main {
+                padding: 1rem 0;
+            }
+
+            .card {
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            .card h2 {
+                font-size: 1.4rem;
+                margin-bottom: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-card h3 {
+                font-size: 1.75rem;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 0.875rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .btn {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.95rem;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .table {
+                font-size: 0.875rem;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table thead,
+            .table tbody,
+            .table tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.5rem;
+                word-wrap: break-word;
+            }
+
+            .modal {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                padding: 1.25rem;
+                margin: 1rem auto;
+            }
+
+            .modal-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
+            }
+
+            /* Quick actions buttons */
+            div[style*="display: flex"] {
+                flex-direction: column;
+            }
+
+            div[style*="display: flex"] button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .app-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .logo {
+                height: 50px;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .card h2 {
+                font-size: 1.2rem;
+            }
+
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .table {
+                font-size: 0.8rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.4rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Show navigation on desktop */
+        @media (min-width: 769px) {
+            .mobile-menu-toggle {
+                display: none !important;
+            }
+
+            .main-nav {
+                display: flex !important;
+            }
+        }
+
+        /* Tablet optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <img src="logo_orel_cropped.png" alt="Orel Bořitov" class="logo" onerror="this.src='public/logo_orel_cropped.png'; this.onerror=null;" />
+                    <h1>Střelby ze vzduchovek</h1>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰ Menu</button>
+                <nav class="main-nav" id="main-nav">
+                    <a href="#" onclick="showPage('home'); toggleMobileMenu(); return false;">Domů</a>
+                    <a href="#" onclick="showPage('register-player'); toggleMobileMenu(); return false;">Registrovat hráče</a>
+                    <a href="#" onclick="showPage('add-results'); toggleMobileMenu(); return false;">Zadat výsledky</a>
+                    <a href="#" onclick="showPage('results'); toggleMobileMenu(); return false;">Výsledky soutěží</a>
+                    <a href="#" onclick="showPage('player-history'); toggleMobileMenu(); return false;">Historie hráče</a>
+                    <a href="#" onclick="showPage('statistics'); toggleMobileMenu(); return false;">Statistiky</a>
+                    <a href="#" onclick="showPage('manage'); toggleMobileMenu(); return false;">Správa</a>
+                </nav>
+            </div>
+        </header>
+        <main class="app-main">
+            <div class="container">
+                <!-- Home Page -->
+                <div id="home" class="page active">
+                    <div class="card">
+                        <h2>Vítejte v systému pro sledování střelby ze vzduchovek</h2>
+                        <p style="margin-bottom: 2rem; font-size: 1.1rem; color: #666;">
+                            Systém pro správu soutěží střelby ze vzduchovek organizace Orel Bořitov
+                        </p>
+                        <div class="stats-grid" id="home-stats">
+                            <!-- Stats will be loaded here -->
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1rem; color: #8b6914;">Rychlé akce</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                                <button class="btn btn-primary" onclick="showPage('register-player')">Registrovat nového hráče</button>
+                                <button class="btn btn-primary" onclick="showPage('add-competition')">Vytvořit novou soutěž</button>
+                                <button class="btn btn-primary" onclick="showPage('add-results')">Zadat výsledky</button>
+                                <button class="btn btn-secondary" onclick="showPage('results')">Zobrazit výsledky</button>
+                                <button class="btn btn-secondary" onclick="showPage('statistics')">Statistiky</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1rem; color: #8b6914;">Uzamknout/Odemknout soutěž</h3>
+                            <div class="form-group">
+                                <label for="lock-competition-select">Vyberte soutěž</label>
+                                <select id="lock-competition-select" style="max-width: 400px;">
+                                    <option value="">-- Vyberte soutěž --</option>
+                                </select>
+                            </div>
+                            <div id="lock-status" style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 5px; display: none;">
+                                <p id="lock-status-text" style="margin: 0;"></p>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                                <button class="btn btn-warning" id="lock-competition-btn" onclick="showLockModal()" disabled>Uzamknout soutěž</button>
+                                <button class="btn btn-success" id="unlock-competition-btn" onclick="showUnlockModal()" disabled>Odemknout soutěž</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Player Page -->
+                <div id="register-player" class="page">
+                    <div class="card">
+                        <h2>Registrovat nového hráče</h2>
+                        <div id="register-alert"></div>
+                        <form onsubmit="handleRegisterPlayer(event)">
+                            <div class="form-group">
+                                <label for="player-name">Jméno hráče *</label>
+                                <input type="text" id="player-name" required placeholder="Zadejte jméno hráče">
+                            </div>
+                            <div class="form-group">
+                                <label for="player-category">Kategorie *</label>
+                                <select id="player-category" required>
+                                    <option value="chlapci-do-15">Chlapci do 15 let</option>
+                                    <option value="divky-do-15">Dívky do 15 let</option>
+                                    <option value="muzi-od-16">Muži od 16 let</option>
+                                    <option value="zeny-od-16">Ženy od 16 let</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="player-competition">Soutěž *</label>
+                                <select id="player-competition" required>
+                                    <option value="">-- Vyberte soutěž --</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Registrovat hráče</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Competition Page -->
+                <div id="add-competition" class="page">
+                    <div class="card">
+                        <h2>Vytvořit novou soutěž</h2>
+                        <div id="competition-alert"></div>
+                        <form onsubmit="handleAddCompetition(event)">
+                            <div class="form-group">
+                                <label for="competition-type">Typ soutěže *</label>
+                                <select id="competition-type" required>
+                                    <option value="jarni">Jarní střelby</option>
+                                    <option value="podzimni">Podzimní střelby</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="competition-year">Rok *</label>
+                                <input type="number" id="competition-year" required min="2023" max="2026">
+                                <small style="color: #666; display: block; margin-top: 0.25rem;">Můžete zadat roky 2023-2026 (pro zpětné zadání 2023-2025 a budoucí 2026)</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="competition-date">Datum konání *</label>
+                                <input type="date" id="competition-date" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Vytvořit soutěž</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Results Page -->
+                <div id="add-results" class="page">
+                    <div class="card">
+                        <h2>Zadat výsledky</h2>
+                        <div id="results-alert"></div>
+                        <form onsubmit="handleAddResults(event)">
+                            <div class="form-group">
+                                <label for="result-competition">Soutěž *</label>
+                                <select id="result-competition" required onchange="loadPlayersByCategory()">
+                                    <option value="">-- Vyberte soutěž --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="result-category">Kategorie</label>
+                                <select id="result-category" onchange="loadPlayersByCategory()">
+                                    <option value="">Všechny kategorie</option>
+                                    <option value="chlapci-do-15">Chlapci do 15 let</option>
+                                    <option value="divky-do-15">Dívky do 15 let</option>
+                                    <option value="muzi-od-16">Muži od 16 let</option>
+                                    <option value="zeny-od-16">Ženy od 16 let</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="result-player">Hráč *</label>
+                                <select id="result-player" required onchange="checkExistingRounds()">
+                                    <option value="">-- Vyberte hráče --</option>
+                                </select>
+                            </div>
+                            <div id="round1-section" class="form-group" style="display: none;">
+                                <label for="result-round1">Kolo 1 (0-50 bodů) *</label>
+                                <input type="number" id="result-round1" min="0" max="50">
+                            </div>
+                            <div id="round2-section" class="form-group" style="display: none;">
+                                <label for="result-round2">Kolo 2 (0-50 bodů) *</label>
+                                <input type="number" id="result-round2" min="0" max="50">
+                            </div>
+                            <div id="rozstrel-section" class="form-group" style="display: none;">
+                                <label for="result-rozstrel">Rozstřel (0-50 bodů) *</label>
+                                <input type="number" id="result-rozstrel" min="0" max="50">
+                                <small style="color: #666; display: block; margin-top: 0.25rem;">Rozstřel je potřeba, pokud máte stejný celkový počet bodů jako jiný hráč na 1., 2. nebo 3. místě ve vaší kategorii.</small>
+                            </div>
+                            <div id="absolute-winner-rozstrel-section" class="form-group" style="display: none;">
+                                <label for="result-absolute-winner-rozstrel">Rozstřel o absolutního vítěze (0-50 bodů) *</label>
+                                <input type="number" id="result-absolute-winner-rozstrel" min="0" max="50">
+                                <small id="absolute-winner-rozstrel-info" style="color: #666; display: block; margin-top: 0.25rem;">Rozstřel o absolutního vítěze je potřeba, pokud jste na 1. místě ve vaší kategorii a máte stejný celkový počet bodů (bez rozstřelu) jako vítězové z jiných kategorií.</small>
+                            </div>
+                            <div id="all-rounds-entered" style="margin-bottom: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 5px; display: none;">
+                                <p style="color: #2e7d32; margin: 0;">✓ Všechna kola pro tohoto hráče jsou již zadaná.</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="submit-results-btn" style="display: none;">Uložit výsledek</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- View Results Page -->
+                <div id="results" class="page">
+                    <div class="card">
+                        <h2>Výsledky soutěží</h2>
+                        <div class="form-group">
+                            <label for="results-competition-select">Vyberte soutěž</label>
+                            <select id="results-competition-select" onchange="loadCompetitionResults()" style="max-width: 400px;">
+                                <option value="">-- Vyberte soutěž --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="results-category-select">Vyberte kategorii</label>
+                            <select id="results-category-select" onchange="loadCompetitionResults()" style="max-width: 400px;">
+                                <option value="">Všechny kategorie</option>
+                                <option value="chlapci-do-15">Chlapci do 15 let</option>
+                                <option value="divky-do-15">Dívky do 15 let</option>
+                                <option value="muzi-od-16">Muži od 16 let</option>
+                                <option value="zeny-od-16">Ženy od 16 let</option>
+                            </select>
+                        </div>
+                        <div id="results-content"></div>
+                    </div>
+                </div>
+
+                <!-- Player History Page -->
+                <div id="player-history" class="page">
+                    <div class="card">
+                        <h2>Historie hráče</h2>
+                        <div class="form-group">
+                            <label for="history-player-select">Vyberte hráče</label>
+                            <select id="history-player-select" onchange="loadPlayerHistory()" style="max-width: 400px;">
+                                <option value="">-- Vyberte hráče --</option>
+                            </select>
+                        </div>
+                        <div id="history-content"></div>
+                    </div>
+                </div>
+
+                <!-- Statistics Page -->
+                <div id="statistics" class="page">
+                    <div class="card">
+                        <h2>Statistiky a zajímavosti</h2>
+                        <div id="statistics-content"></div>
+                    </div>
+                </div>
+
+                <!-- Manage Page -->
+                <div id="manage" class="page">
+                    <div class="card">
+                        <h2>Správa - Mazání hráčů a výsledků</h2>
+                        
+                        <div style="margin-bottom: 3rem;">
+                            <h3 style="margin-bottom: 1rem; color: #8b6914;">Správa hráčů</h3>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="players-competition-select">Vyberte soutěž (volitelné - pro mazání z konkrétní soutěže)</label>
+                                <select id="players-competition-select" onchange="loadPlayersList()" style="max-width: 400px;">
+                                    <option value="">-- Všechny soutěže --</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="players-category-select">Vyberte kategorii (volitelné)</label>
+                                <select id="players-category-select" onchange="loadPlayersList()" style="max-width: 400px;">
+                                    <option value="">Všechny kategorie</option>
+                                    <option value="chlapci-do-15">Chlapci do 15 let</option>
+                                    <option value="divky-do-15">Dívky do 15 let</option>
+                                    <option value="muzi-od-16">Muži od 16 let</option>
+                                    <option value="zeny-od-16">Ženy od 16 let</option>
+                                </select>
+                            </div>
+                            <div id="players-list"></div>
+                        </div>
+
+                        <div style="margin-bottom: 3rem;">
+                            <h3 style="margin-bottom: 1rem; color: #8b6914;">Správa výsledků</h3>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="manage-competition-select">Vyberte soutěž pro zobrazení výsledků</label>
+                                <select id="manage-competition-select" onchange="loadManageResults()" style="max-width: 400px;">
+                                    <option value="">-- Vyberte soutěž --</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="manage-category-select">Vyberte kategorii (volitelné)</label>
+                                <select id="manage-category-select" onchange="loadManageResults()" style="max-width: 400px;">
+                                    <option value="">Všechny kategorie</option>
+                                    <option value="chlapci-do-15">Chlapci do 15 let</option>
+                                    <option value="divky-do-15">Dívky do 15 let</option>
+                                    <option value="muzi-od-16">Muži od 16 let</option>
+                                    <option value="zeny-od-16">Ženy od 16 let</option>
+                                </select>
+                            </div>
+                            <div id="manage-results-list"></div>
+                        </div>
+
+                        <div style="margin-bottom: 3rem;">
+                            <h3 style="margin-bottom: 1rem; color: #8b6914;">Správa soutěží</h3>
+                            <div id="competitions-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lock/Unlock Competition Modal -->
+    <div id="lock-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="lock-modal-title">Uzamknout soutěž</h3>
+            <div class="form-group">
+                <label for="lock-password">Heslo pro uzamčení *</label>
+                <input type="password" id="lock-password" required placeholder="Zadejte heslo">
+            </div>
+            <div class="form-group">
+                <label for="lock-password-confirm">Potvrzení hesla *</label>
+                <input type="password" id="lock-password-confirm" required placeholder="Zadejte heslo znovu">
+            </div>
+            <div id="lock-modal-alert"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-warning" onclick="closeLockModal()">Zrušit</button>
+                <button type="button" class="btn btn-secondary" onclick="lockCompetition()">Uzamknout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unlock Competition Modal -->
+    <div id="unlock-modal" class="modal">
+        <div class="modal-content">
+            <h3>Odemknout soutěž</h3>
+            <div class="form-group">
+                <label for="unlock-password">Heslo *</label>
+                <input type="password" id="unlock-password" required placeholder="Zadejte heslo">
+            </div>
+            <div id="unlock-modal-alert"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-success" onclick="closeUnlockModal()">Zrušit</button>
+                <button type="button" class="btn btn-secondary" onclick="unlockCompetition()">Odemknout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Result Modal -->
+    <div id="edit-result-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="edit-result-title">Opravit výsledky</h3>
+            <div class="modal-inputs">
+                <div class="form-group">
+                    <label for="edit-round1">Kolo 1 (0-50)</label>
+                    <input type="number" id="edit-round1" min="0" max="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-round2">Kolo 2 (0-50)</label>
+                    <input type="number" id="edit-round2" min="0" max="50" required>
+                </div>
+                <div class="form-group" id="edit-rozstrel-group">
+                    <label for="edit-rozstrel">Rozstřel (0-50)</label>
+                    <input type="number" id="edit-rozstrel" min="0" max="50" disabled>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Rozstřel lze opravit pouze pokud byl zadán v sekci "Zadat výsledky"</small>
+                </div>
+            </div>
+            <div id="edit-result-total" style="margin-bottom: 1rem; padding: 0.75rem; background: #f8f9fa; border-radius: 5px; text-align: center;">
+                <strong>Celkem: <span id="edit-total-points">0</span> bodů</strong>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditResultModal()">Zrušit</button>
+                <button type="button" class="btn btn-primary" onclick="saveEditResult()">Uložit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for edit result modal
+        let currentEditResultId = null;
+        let currentEditCallback = null;
+
+        // Show edit result modal
+        function showEditResultModal(resultId, playerName, currentRound1, currentRound2, currentRozstrel, callback) {
+            currentEditResultId = resultId;
+            currentEditCallback = callback;
+            document.getElementById('edit-result-title').textContent = `Opravit výsledky - ${playerName}`;
+            document.getElementById('edit-round1').value = currentRound1 !== null && currentRound1 !== undefined ? currentRound1 : '';
+            document.getElementById('edit-round2').value = currentRound2 !== null && currentRound2 !== undefined ? currentRound2 : '';
+            const rozstrelInput = document.getElementById('edit-rozstrel');
+            const hasRozstrel = currentRozstrel !== null && currentRozstrel !== undefined;
+            rozstrelInput.value = hasRozstrel ? currentRozstrel : '';
+            // Enable rozstrel input only if it was already entered
+            rozstrelInput.disabled = !hasRozstrel;
+            if (hasRozstrel) {
+                rozstrelInput.removeAttribute('disabled');
+            } else {
+                rozstrelInput.setAttribute('disabled', 'disabled');
+            }
+            updateEditTotal();
+            document.getElementById('edit-result-modal').classList.add('active');
+            
+            // Focus first input
+            setTimeout(() => {
+                document.getElementById('edit-round1').focus();
+            }, 100);
+        }
+
+        // Close edit result modal
+        function closeEditResultModal() {
+            document.getElementById('edit-result-modal').classList.remove('active');
+            currentEditResultId = null;
+            currentEditCallback = null;
+        }
+
+        // Update total in modal
+        function updateEditTotal() {
+            const round1Input = document.getElementById('edit-round1').value;
+            const round2Input = document.getElementById('edit-round2').value;
+            const round1 = round1Input === '' ? 0 : (parseInt(round1Input) || 0);
+            const round2 = round2Input === '' ? 0 : (parseInt(round2Input) || 0);
+            // Total does not include rozstrel - rozstrel is only used for tie-breaking
+            document.getElementById('edit-total-points').textContent = round1 + round2;
+        }
+
+        // Save edit result
+        function saveEditResult() {
+            if (!currentEditResultId) return;
+            
+            // Get competition ID from result
+            const allResults = storage.results.getAll();
+            const currentResult = allResults.find(r => r.id === currentEditResultId);
+            if (!currentResult) {
+                alert('Výsledek nenalezen');
+                closeEditResultModal();
+                return;
+            }
+            
+            // Check if competition is locked
+            if (isCompetitionLocked(currentResult.competitionId)) {
+                alert('Tato soutěž je uzamčená. Výsledky nelze měnit.');
+                closeEditResultModal();
+                return;
+            }
+            
+            const round1Input = document.getElementById('edit-round1').value;
+            const round2Input = document.getElementById('edit-round2').value;
+            const rozstrelInput = document.getElementById('edit-rozstrel').value;
+            const round1 = round1Input === '' ? null : parseInt(round1Input);
+            const round2 = round2Input === '' ? null : parseInt(round2Input);
+            const rozstrel = rozstrelInput === '' ? null : parseInt(rozstrelInput);
+            
+            if (round1 !== null && (isNaN(round1) || round1 < 0 || round1 > 50)) {
+                alert('Kolo 1 musí být číslo mezi 0 a 50');
+                return;
+            }
+            
+            if (round2 !== null && (isNaN(round2) || round2 < 0 || round2 > 50)) {
+                alert('Kolo 2 musí být číslo mezi 0 a 50');
+                return;
+            }
+            
+            if (rozstrel !== null && (isNaN(rozstrel) || rozstrel < 0 || rozstrel > 50)) {
+                alert('Rozstřel musí být číslo mezi 0 a 50');
+                return;
+            }
+            
+            const results = storage.results.getAll();
+            const result = results.find(r => r.id === currentEditResultId);
+            if (!result) {
+                alert('Výsledek nenalezen');
+                closeEditResultModal();
+                return;
+            }
+            
+            // Update the result
+            result.round1 = round1;
+            result.round2 = round2;
+            result.rozstrel = rozstrel;
+            // Total does not include rozstrel - rozstrel is only used for tie-breaking
+            result.total = (round1 || 0) + (round2 || 0);
+            
+            storage.results.update(result);
+            
+            closeEditResultModal();
+            
+            // Call callback to reload view immediately (before alert)
+            if (currentEditCallback) {
+                currentEditCallback();
+            } else {
+                // Fallback: reload competition results if we're on results page
+                if (document.getElementById('results-content')) {
+                    loadCompetitionResults();
+                }
+            }
+            
+            // Update home stats
+            loadHomeStats();
+            
+            // Show alert after a short delay to allow DOM to update first
+            setTimeout(() => {
+                const rozstrelText = rozstrel !== null ? `, Rozstřel: ${rozstrel}` : '';
+                alert(`Výsledek byl opraven.\nKolo 1: ${round1 !== null ? round1 : '-'}, Kolo 2: ${round2 !== null ? round2 : '-'}${rozstrelText}, Celkem: ${result.total}`);
+            }, 50);
+        }
+
+        // Add event listeners for total calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            const round1Input = document.getElementById('edit-round1');
+            const round2Input = document.getElementById('edit-round2');
+            const rozstrelInput = document.getElementById('edit-rozstrel');
+            
+            if (round1Input) {
+                round1Input.addEventListener('input', updateEditTotal);
+            }
+            if (round2Input) {
+                round2Input.addEventListener('input', updateEditTotal);
+            }
+            if (rozstrelInput) {
+                rozstrelInput.addEventListener('input', updateEditTotal);
+            }
+            
+            // Close modal on outside click
+            document.getElementById('edit-result-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditResultModal();
+                }
+            });
+            
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && document.getElementById('edit-result-modal').classList.contains('active')) {
+                    closeEditResultModal();
+                }
+            });
+        });
+        // Storage keys
+        const STORAGE_KEYS = {
+            PLAYERS: 'orel_boritov_players',
+            COMPETITIONS: 'orel_boritov_competitions',
+            RESULTS: 'orel_boritov_results',
+        };
+
+        // Category and competition labels
+        const CATEGORY_LABELS = {
+            'chlapci-do-15': 'Chlapci do 15 let',
+            'divky-do-15': 'Dívky do 15 let',
+            'muzi-od-16': 'Muži od 16 let',
+            'zeny-od-16': 'Ženy od 16 let',
+        };
+
+        const COMPETITION_TYPE_LABELS = {
+            'jarni': 'Jarní střelby',
+            'podzimni': 'Podzimní střelby',
+        };
+
+        // Storage functions
+        const storage = {
+            players: {
+                getAll: () => {
+                    const data = localStorage.getItem(STORAGE_KEYS.PLAYERS);
+                    return data ? JSON.parse(data) : [];
+                },
+                save: (players) => {
+                    localStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(players));
+                },
+                add: (player) => {
+                    const players = storage.players.getAll();
+                    players.push(player);
+                    storage.players.save(players);
+                },
+                getById: (id) => {
+                    const players = storage.players.getAll();
+                    return players.find(p => p.id === id);
+                },
+                update: (player) => {
+                    const players = storage.players.getAll();
+                    const index = players.findIndex(p => p.id === player.id);
+                    if (index !== -1) {
+                        players[index] = player;
+                        storage.players.save(players);
+                    }
+                },
+                delete: (id) => {
+                    const players = storage.players.getAll();
+                    const filtered = players.filter(p => p.id !== id);
+                    storage.players.save(filtered);
+                    // Also delete all results for this player
+                    const results = storage.results.getAll();
+                    const filteredResults = results.filter(r => r.playerId !== id);
+                    storage.results.save(filteredResults);
+                },
+            },
+            competitions: {
+                getAll: () => {
+                    const data = localStorage.getItem(STORAGE_KEYS.COMPETITIONS);
+                    return data ? JSON.parse(data) : [];
+                },
+                save: (competitions) => {
+                    localStorage.setItem(STORAGE_KEYS.COMPETITIONS, JSON.stringify(competitions));
+                },
+                add: (competition) => {
+                    const competitions = storage.competitions.getAll();
+                    competitions.push(competition);
+                    storage.competitions.save(competitions);
+                },
+                getById: (id) => {
+                    const competitions = storage.competitions.getAll();
+                    return competitions.find(c => c.id === id);
+                },
+                update: (competition) => {
+                    const competitions = storage.competitions.getAll();
+                    const index = competitions.findIndex(c => c.id === competition.id);
+                    if (index !== -1) {
+                        competitions[index] = competition;
+                        storage.competitions.save(competitions);
+                    }
+                },
+            },
+            results: {
+                getAll: () => {
+                    const data = localStorage.getItem(STORAGE_KEYS.RESULTS);
+                    return data ? JSON.parse(data) : [];
+                },
+                save: (results) => {
+                    localStorage.setItem(STORAGE_KEYS.RESULTS, JSON.stringify(results));
+                },
+                add: (result) => {
+                    const results = storage.results.getAll();
+                    results.push(result);
+                    storage.results.save(results);
+                },
+                getByCompetitionId: (competitionId) => {
+                    const results = storage.results.getAll();
+                    return results.filter(r => r.competitionId === competitionId);
+                },
+                getByPlayerId: (playerId) => {
+                    const results = storage.results.getAll();
+                    return results.filter(r => r.playerId === playerId);
+                },
+                delete: (id) => {
+                    const results = storage.results.getAll();
+                    const filtered = results.filter(r => r.id !== id);
+                    storage.results.save(filtered);
+                },
+                update: (result) => {
+                    const results = storage.results.getAll();
+                    const index = results.findIndex(r => r.id === result.id);
+                    if (index !== -1) {
+                        results[index] = result;
+                        storage.results.save(results);
+                    }
+                },
+                deleteByCompetitionId: (competitionId) => {
+                    const results = storage.results.getAll();
+                    const filtered = results.filter(r => r.competitionId !== competitionId);
+                    storage.results.save(filtered);
+                },
+            },
+        };
+
+        // Page navigation
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const nav = document.getElementById('main-nav');
+            if (nav) {
+                nav.classList.toggle('mobile-hidden');
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('main-nav');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (nav && toggle && !nav.contains(event.target) && !toggle.contains(event.target)) {
+                if (window.innerWidth <= 768) {
+                    nav.classList.add('mobile-hidden');
+                }
+            }
+        });
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Load data for specific pages
+            if (pageId === 'home') {
+                loadHomeStats();
+                loadLockCompetitionSelect();
+            } else if (pageId === 'register-player') {
+                loadRegisterPlayerCompetitions();
+            } else if (pageId === 'add-results') {
+                loadCompetitionsAndPlayers();
+            } else if (pageId === 'results') {
+                loadCompetitionsSelect();
+            } else if (pageId === 'player-history') {
+                loadPlayersSelect();
+            } else if (pageId === 'statistics') {
+                loadStatistics();
+            } else if (pageId === 'manage') {
+                loadManagePage();
+            }
+        }
+
+        // Load competitions for player registration
+        function loadRegisterPlayerCompetitions() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'podzimni' ? -1 : (b.type === 'podzimni' ? 1 : -1);
+            });
+            
+            const select = document.getElementById('player-competition');
+            const currentValue = select.value; // Preserve current selection
+            select.innerHTML = '<option value="">-- Vyberte soutěž --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                select.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists
+            if (currentValue) {
+                select.value = currentValue;
+            } else if (competitions.length > 0) {
+                // Auto-select newest competition if no previous selection
+                select.value = competitions[0].id;
+            }
+        }
+
+        // Load lock competition select
+        function loadLockCompetitionSelect() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'podzimni' ? -1 : (b.type === 'podzimni' ? 1 : -1);
+            });
+            
+            const select = document.getElementById('lock-competition-select');
+            select.innerHTML = '<option value="">-- Vyberte soutěž --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                select.appendChild(option);
+            });
+            
+            // Add change listener
+            select.onchange = function() {
+                updateLockButtons();
+            };
+            
+            updateLockButtons();
+        }
+
+        // Update lock/unlock buttons based on selected competition
+        function updateLockButtons() {
+            const competitionId = document.getElementById('lock-competition-select').value;
+            const lockBtn = document.getElementById('lock-competition-btn');
+            const unlockBtn = document.getElementById('unlock-competition-btn');
+            const statusDiv = document.getElementById('lock-status');
+            const statusText = document.getElementById('lock-status-text');
+            
+            if (!competitionId) {
+                lockBtn.disabled = true;
+                unlockBtn.disabled = true;
+                statusDiv.style.display = 'none';
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) {
+                lockBtn.disabled = true;
+                unlockBtn.disabled = true;
+                statusDiv.style.display = 'none';
+                return;
+            }
+            
+            const isLocked = competition.locked === true;
+            lockBtn.disabled = isLocked;
+            unlockBtn.disabled = !isLocked;
+            
+            statusDiv.style.display = 'block';
+            if (isLocked) {
+                statusText.textContent = '🔒 Soutěž je uzamčená - výsledky nelze měnit';
+                statusText.style.color = '#d32f2f';
+            } else {
+                statusText.textContent = '🔓 Soutěž je odemčená - výsledky lze měnit';
+                statusText.style.color = '#2e7d32';
+            }
+        }
+
+        // Show lock modal
+        function showLockModal() {
+            const competitionId = document.getElementById('lock-competition-select').value;
+            if (!competitionId) {
+                alert('Vyberte soutěž');
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (competition && competition.locked) {
+                alert('Soutěž je již uzamčená');
+                return;
+            }
+            
+            document.getElementById('lock-password').value = '';
+            document.getElementById('lock-password-confirm').value = '';
+            document.getElementById('lock-modal-alert').innerHTML = '';
+            document.getElementById('lock-modal').classList.add('active');
+        }
+
+        // Close lock modal
+        function closeLockModal() {
+            document.getElementById('lock-modal').classList.remove('active');
+        }
+
+        // Lock competition
+        function lockCompetition() {
+            const competitionId = document.getElementById('lock-competition-select').value;
+            const password = document.getElementById('lock-password').value;
+            const passwordConfirm = document.getElementById('lock-password-confirm').value;
+            const alertDiv = document.getElementById('lock-modal-alert');
+            
+            if (!password) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Zadejte heslo</div>';
+                return;
+            }
+            
+            if (password !== passwordConfirm) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Hesla se neshodují</div>';
+                return;
+            }
+            
+            if (password.length < 4) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Heslo musí mít alespoň 4 znaky</div>';
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Soutěž nenalezena</div>';
+                return;
+            }
+            
+            competition.locked = true;
+            competition.password = password;
+            storage.competitions.update(competition);
+            
+            closeLockModal();
+            updateLockButtons();
+            alert('Soutěž byla úspěšně uzamčena');
+        }
+
+        // Show unlock modal
+        function showUnlockModal() {
+            const competitionId = document.getElementById('lock-competition-select').value;
+            if (!competitionId) {
+                alert('Vyberte soutěž');
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition || !competition.locked) {
+                alert('Soutěž není uzamčená');
+                return;
+            }
+            
+            document.getElementById('unlock-password').value = '';
+            document.getElementById('unlock-modal-alert').innerHTML = '';
+            document.getElementById('unlock-modal').classList.add('active');
+        }
+
+        // Close unlock modal
+        function closeUnlockModal() {
+            document.getElementById('unlock-modal').classList.remove('active');
+        }
+
+        // Unlock competition
+        function unlockCompetition() {
+            const competitionId = document.getElementById('lock-competition-select').value;
+            const password = document.getElementById('unlock-password').value;
+            const alertDiv = document.getElementById('unlock-modal-alert');
+            
+            if (!password) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Zadejte heslo</div>';
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Soutěž nenalezena</div>';
+                return;
+            }
+            
+            if (!competition.locked) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Soutěž není uzamčená</div>';
+                return;
+            }
+            
+            if (competition.password !== password) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Nesprávné heslo</div>';
+                return;
+            }
+            
+            competition.locked = false;
+            competition.password = null;
+            storage.competitions.update(competition);
+            
+            closeUnlockModal();
+            updateLockButtons();
+            alert('Soutěž byla úspěšně odemčena');
+        }
+
+        // Check if competition is locked
+        function isCompetitionLocked(competitionId) {
+            const competition = storage.competitions.getById(competitionId);
+            return competition && competition.locked === true;
+        }
+
+        // Home page
+        function loadHomeStats() {
+            const players = storage.players.getAll();
+            const competitions = storage.competitions.getAll();
+            const results = storage.results.getAll();
+            
+            document.getElementById('home-stats').innerHTML = `
+                <div class="stat-card clickable" onclick="showPage('register-player')">
+                    <h3>${players.length}</h3>
+                    <p>Registrovaných hráčů</p>
+                </div>
+                <div class="stat-card clickable" onclick="showPage('results')">
+                    <h3>${competitions.length}</h3>
+                    <p>Proběhlých soutěží</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${results.length}</h3>
+                    <p>Zaznamenaných výsledků</p>
+                </div>
+            `;
+        }
+
+        // Remove diacritics from text
+        function removeDiacritics(text) {
+            return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        // Register player
+        function handleRegisterPlayer(event) {
+            event.preventDefault();
+            const name = document.getElementById('player-name').value.trim();
+            const category = document.getElementById('player-category').value;
+            const competitionId = document.getElementById('player-competition').value;
+            const alertDiv = document.getElementById('register-alert');
+            
+            if (!name) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Jméno je povinné</div>';
+                return;
+            }
+            
+            if (!competitionId) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Vyberte soutěž</div>';
+                return;
+            }
+            
+            // Check for duplicate name (case-insensitive and without diacritics)
+            const existingPlayers = storage.players.getAll();
+            const nameNormalized = removeDiacritics(name.toLowerCase());
+            const duplicatePlayer = existingPlayers.find(p => {
+                const existingNameNormalized = removeDiacritics(p.name.toLowerCase());
+                return existingNameNormalized === nameNormalized;
+            });
+            
+            if (duplicatePlayer) {
+                // If duplicate player is in the same category, show error
+                if (duplicatePlayer.category === category) {
+                    alertDiv.innerHTML = `<div class="alert alert-error">Hráč se jménem "${name}" již existuje v kategorii ${CATEGORY_LABELS[category]}!</div>`;
+                    return;
+                }
+                
+                // Check if transfer is allowed (only from lower to higher category)
+                const allowedTransfers = {
+                    'chlapci-do-15': ['muzi-od-16'],
+                    'divky-do-15': ['zeny-od-16']
+                };
+                
+                const canTransfer = allowedTransfers[duplicatePlayer.category] && 
+                                   allowedTransfers[duplicatePlayer.category].includes(category);
+                
+                if (!canTransfer) {
+                    if (duplicatePlayer.category === 'muzi-od-16' || duplicatePlayer.category === 'zeny-od-16') {
+                        alertDiv.innerHTML = `<div class="alert alert-error">Hráč se jménem "${name}" je již v kategorii ${CATEGORY_LABELS[duplicatePlayer.category]}. Převod zpět do nižší kategorie není možný.</div>`;
+                    } else {
+                        alertDiv.innerHTML = `<div class="alert alert-error">Hráč se jménem "${name}" je v kategorii ${CATEGORY_LABELS[duplicatePlayer.category]}. Převod do kategorie ${CATEGORY_LABELS[category]} není možný. Lze převádět pouze: Chlapci do 15 let → Muži od 16 let, Dívky do 15 let → Ženy od 16 let.</div>`;
+                    }
+                    return;
+                }
+                
+                // If duplicate player is in different category and transfer is allowed, offer to transfer
+                const transferConfirmed = confirm(
+                    `Hráč se jménem "${name}" již existuje v kategorii ${CATEGORY_LABELS[duplicatePlayer.category]}.\n\n` +
+                    `Chcete převést tohoto hráče do kategorie ${CATEGORY_LABELS[category]}?\n\n` +
+                    `(Historie výsledků zůstane zachována)`
+                );
+                
+                if (transferConfirmed) {
+                    // Change category of existing player
+                    duplicatePlayer.category = category;
+                    storage.players.update(duplicatePlayer);
+                    
+                    // Check if result already exists for this player and competition
+                    const existingResults = storage.results.getByCompetitionId(competitionId);
+                    const existingResult = existingResults.find(r => r.playerId === duplicatePlayer.id);
+                    
+                    if (!existingResult) {
+                        // Create initial result with null values (not entered yet)
+                        const result = {
+                            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                            playerId: duplicatePlayer.id,
+                            competitionId: competitionId,
+                            round1: null,
+                            round2: null,
+                            rozstrel: null,
+                            total: 0,
+                            categoryAtTime: category, // Store category at time of competition
+                            createdAt: new Date().toISOString(),
+                        };
+                        storage.results.add(result);
+                    } else {
+                        // Only set categoryAtTime if it's not already set (preserve original category for old results)
+                        // Don't overwrite existing categoryAtTime even if player category changed
+                        if (!existingResult.categoryAtTime) {
+                            existingResult.categoryAtTime = category;
+                            storage.results.update(existingResult);
+                        }
+                    }
+                    
+                    alertDiv.innerHTML = `<div class="alert alert-success">Hráč "${name}" byl úspěšně převeden do kategorie ${CATEGORY_LABELS[category]} a přihlášen do soutěže!</div>`;
+                    document.getElementById('player-name').value = '';
+                    
+                    // Always reload players list in "Zadat výsledky" section if it exists
+                    // This ensures the list is updated even if user navigates to it later
+                    const resultCategorySelect = document.getElementById('result-category');
+                    if (resultCategorySelect) {
+                        // Always reload the list to show updated player categories
+                        // If no category is selected, it will show all players including the transferred one
+                        loadPlayersByCategory();
+                    }
+                    
+                    setTimeout(() => {
+                        alertDiv.innerHTML = '';
+                    }, 3000);
+                    return;
+                } else {
+                    // User cancelled, don't register
+                    return;
+                }
+            }
+            
+            const player = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                name: name,
+                category: category,
+                createdAt: new Date().toISOString(),
+            };
+            
+            storage.players.add(player);
+            
+            // Check if result already exists for this player and competition
+            const existingResults = storage.results.getByCompetitionId(competitionId);
+            const existingResult = existingResults.find(r => r.playerId === player.id);
+            
+            if (!existingResult) {
+                // Create initial result with null values (not entered yet)
+                const result = {
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                    playerId: player.id,
+                    competitionId: competitionId,
+                    round1: null,
+                    round2: null,
+                    rozstrel: null,
+                    total: 0,
+                    categoryAtTime: category, // Store category at time of competition
+                    createdAt: new Date().toISOString(),
+                };
+                storage.results.add(result);
+            } else {
+                // Update category if not set
+                if (!existingResult.categoryAtTime) {
+                    existingResult.categoryAtTime = category;
+                    storage.results.update(existingResult);
+                }
+            }
+            
+            alertDiv.innerHTML = '<div class="alert alert-success">Hráč byl úspěšně registrován a přihlášen do soutěže!</div>';
+            document.getElementById('player-name').value = '';
+            // Kategorie a soutěž zůstanou zachovány (ne resetují se)
+            
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 2000);
+        }
+
+        // Add competition
+        function handleAddCompetition(event) {
+            event.preventDefault();
+            const type = document.getElementById('competition-type').value;
+            const year = parseInt(document.getElementById('competition-year').value);
+            const date = document.getElementById('competition-date').value;
+            const alertDiv = document.getElementById('competition-alert');
+            
+            if (year < 2023 || year > 2026) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Rok musí být mezi 2023 a 2026</div>';
+                return;
+            }
+            
+            const existing = storage.competitions.getAll();
+            const exists = existing.some(c => c.type === type && c.year === year);
+            
+            if (exists) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Soutěž tohoto typu pro tento rok již existuje</div>';
+                return;
+            }
+            
+            const competition = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                type: type,
+                year: year,
+                date: date,
+                locked: false,
+                password: null,
+                absoluteWinnerRozstrel: {}, // Object with playerId: rozstrel value for absolute winner tiebreaker
+            };
+            
+            storage.competitions.add(competition);
+            alertDiv.innerHTML = '<div class="alert alert-success">Soutěž byla úspěšně vytvořena!</div>';
+            
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+                showPage('home');
+            }, 2000);
+        }
+
+        // Format competition label with date
+        function formatCompetitionLabel(competition) {
+            let datePart = '';
+            if (competition.date) {
+                try {
+                    // Handle date format YYYY-MM-DD
+                    const date = new Date(competition.date + 'T00:00:00');
+                    if (!isNaN(date.getTime())) {
+                        datePart = ` (${date.toLocaleDateString('cs-CZ')})`;
+                    }
+                } catch (e) {
+                    // If date parsing fails, ignore
+                }
+            }
+            return `${COMPETITION_TYPE_LABELS[competition.type]} ${competition.year}${datePart}`;
+        }
+
+        // Load competitions and players for results form
+        function loadCompetitionsAndPlayers() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'jarni' ? -1 : 1;
+            });
+            
+            const compSelect = document.getElementById('result-competition');
+            compSelect.innerHTML = '<option value="">-- Vyberte soutěž --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                compSelect.appendChild(option);
+            });
+            
+            // Reset category filter to show all players initially
+            const categorySelect = document.getElementById('result-category');
+            if (categorySelect) {
+                categorySelect.value = '';
+            }
+            
+            // Load players based on category filter (will show all if no category selected)
+            // This ensures we always get fresh data from storage
+            loadPlayersByCategory();
+        }
+
+        // Helper function to extract surname (last word) from full name, ignoring part after comma
+        function getSurname(fullName) {
+            // Remove part after comma (e.g., "Novák, ml." -> "Novák ml.")
+            let name = fullName.trim();
+            if (name.includes(',')) {
+                name = name.split(',')[0].trim();
+            }
+            const parts = name.split(/\s+/);
+            return parts.length > 0 ? parts[parts.length - 1] : name;
+        }
+
+        function loadPlayersByCategory() {
+            const selectedCategory = document.getElementById('result-category').value;
+            const competitionId = document.getElementById('result-competition').value;
+            const allPlayers = storage.players.getAll(); // Get fresh data from storage
+            const allResults = storage.results.getAll();
+            
+            // Filter players by category if category is selected
+            // Make sure we're using the latest player data (category might have changed)
+            const players = selectedCategory 
+                ? allPlayers.filter(p => p.category === selectedCategory)
+                : allPlayers;
+            
+            // Sort players by surname (last name)
+            players.sort((a, b) => {
+                const surnameA = getSurname(a.name);
+                const surnameB = getSurname(b.name);
+                return surnameA.localeCompare(surnameB, 'cs');
+            });
+            
+            const playerSelect = document.getElementById('result-player');
+            const currentValue = playerSelect.value; // Preserve current selection
+            playerSelect.innerHTML = '<option value="">-- Vyberte hráče --</option>';
+            
+            players.forEach(player => {
+                // Check if player has result in selected competition
+                let pointsText = '';
+                if (competitionId) {
+                    const playerResult = allResults.find(r => 
+                        r.playerId === player.id && r.competitionId === competitionId
+                    );
+                    
+                    // Show points only if player has at least one round entered (not null) with points
+                    if (playerResult && playerResult.total > 0 && 
+                        ((playerResult.round1 !== null && playerResult.round1 !== undefined) || 
+                         (playerResult.round2 !== null && playerResult.round2 !== undefined))) {
+                        pointsText = ` (${playerResult.total})`;
+                    }
+                }
+                
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `${player.name}${pointsText}`;
+                playerSelect.appendChild(option);
+            });
+            
+            // Restore previous selection if it still exists
+            if (currentValue && players.find(p => p.id === currentValue)) {
+                playerSelect.value = currentValue;
+            }
+            
+            // Check existing rounds for selected player
+            checkExistingRounds();
+        }
+
+        // Check if player needs tiebreaker (rozstrel) - has same total (without rozstrel) as other players on positions 1-3
+        function needsTiebreaker(competitionId, playerId) {
+            const allResults = storage.results.getAll();
+            const allPlayers = storage.players.getAll();
+            
+            const player = allPlayers.find(p => p.id === playerId);
+            if (!player) return false;
+            
+            const existingResult = allResults.find(r => 
+                r.playerId === playerId && r.competitionId === competitionId
+            );
+            
+            // Player must have both rounds entered to check for tiebreaker
+            if (!existingResult || 
+                existingResult.round1 === null || existingResult.round1 === undefined ||
+                existingResult.round2 === null || existingResult.round2 === undefined) {
+                return false;
+            }
+            
+            // Calculate total without rozstrel for comparison
+            const playerTotalWithoutRozstrel = (existingResult.round1 || 0) + (existingResult.round2 || 0);
+            
+            // Get all results for this competition in the same category
+            const categoryResults = allResults
+                .filter(r => r.competitionId === competitionId)
+                .map(r => {
+                    const p = allPlayers.find(pl => pl.id === r.playerId);
+                    return p ? { result: r, player: p } : null;
+                })
+                .filter(item => item && item.player.category === player.category)
+                .filter(item => {
+                    // Only include results with both rounds entered
+                    return item.result.round1 !== null && item.result.round1 !== undefined &&
+                           item.result.round2 !== null && item.result.round2 !== undefined;
+                })
+                .map(item => {
+                    // Calculate total without rozstrel for each result
+                    const totalWithoutRozstrel = (item.result.round1 || 0) + (item.result.round2 || 0);
+                    return { ...item, totalWithoutRozstrel };
+                });
+            
+            // Sort by total without rozstrel descending
+            categoryResults.sort((a, b) => b.totalWithoutRozstrel - a.totalWithoutRozstrel);
+            
+            // Check if player's total (without rozstrel) matches any player on positions 1-3
+            const topThreeTotals = categoryResults.slice(0, 3).map(item => item.totalWithoutRozstrel);
+            
+            if (topThreeTotals.includes(playerTotalWithoutRozstrel)) {
+                // Check if there are multiple players with this total (without rozstrel)
+                const playersWithSameTotal = categoryResults.filter(item => item.totalWithoutRozstrel === playerTotalWithoutRozstrel);
+                return playersWithSameTotal.length > 1;
+            }
+            
+            return false;
+        }
+
+        // Check if absolute winner tiebreaker is needed
+        function needsAbsoluteWinnerTiebreaker(competitionId, playerId) {
+            const allResults = storage.results.getAll();
+            const allPlayers = storage.players.getAll();
+            const competition = storage.competitions.getById(competitionId);
+            
+            if (!competition) return false;
+            
+            const player = allPlayers.find(p => p.id === playerId);
+            if (!player) return false;
+            
+            const existingResult = allResults.find(r => 
+                r.playerId === playerId && r.competitionId === competitionId
+            );
+            
+            // Player must have both rounds entered to check for absolute winner tiebreaker
+            if (!existingResult || 
+                existingResult.round1 === null || existingResult.round1 === undefined ||
+                existingResult.round2 === null || existingResult.round2 === undefined) {
+                return false;
+            }
+            
+            // Calculate total without rozstrel for comparison
+            const playerTotalWithoutRozstrel = (existingResult.round1 || 0) + (existingResult.round2 || 0);
+            
+            // Get all results for this competition
+            const allCompetitionResults = allResults
+                .filter(r => r.competitionId === competitionId)
+                .map(r => {
+                    const p = allPlayers.find(pl => pl.id === r.playerId);
+                    return p ? { result: r, player: p } : null;
+                })
+                .filter(item => item && item.result.round1 !== null && item.result.round1 !== undefined &&
+                                item.result.round2 !== null && item.result.round2 !== undefined)
+                .map(item => {
+                    const totalWithoutRozstrel = (item.result.round1 || 0) + (item.result.round2 || 0);
+                    return { ...item, totalWithoutRozstrel };
+                });
+            
+            // Group by category and find winners (1st place) in each category
+            const categoryWinners = {};
+            Object.keys(CATEGORY_LABELS).forEach(category => {
+                const categoryResults = allCompetitionResults
+                    .filter(item => {
+                        // Use categoryAtTime if available, otherwise use current category
+                        const resultCategory = item.result.categoryAtTime || item.player.category;
+                        return resultCategory === category;
+                    })
+                    .sort((a, b) => {
+                        // Sort by total descending, then by rozstrel descending
+                        if (b.totalWithoutRozstrel !== a.totalWithoutRozstrel) {
+                            return b.totalWithoutRozstrel - a.totalWithoutRozstrel;
+                        }
+                        const rozstrelA = a.result.rozstrel !== null && a.result.rozstrel !== undefined ? a.result.rozstrel : 0;
+                        const rozstrelB = b.result.rozstrel !== null && b.result.rozstrel !== undefined ? b.result.rozstrel : 0;
+                        return rozstrelB - rozstrelA;
+                    });
+                
+                if (categoryResults.length > 0) {
+                    // Get winner(s) - players with highest total (and rozstrel if tied)
+                    const winnerTotal = categoryResults[0].totalWithoutRozstrel;
+                    const winnerRozstrel = categoryResults[0].result.rozstrel !== null && categoryResults[0].result.rozstrel !== undefined ? categoryResults[0].result.rozstrel : 0;
+                    const winners = categoryResults.filter(item => {
+                        const itemTotal = item.totalWithoutRozstrel;
+                        const itemRozstrel = item.result.rozstrel !== null && item.result.rozstrel !== undefined ? item.result.rozstrel : 0;
+                        return itemTotal === winnerTotal && itemRozstrel === winnerRozstrel;
+                    });
+                    
+                    // Always add winners to categoryWinners (not just if this player is one of them)
+                    if (winners.length > 0) {
+                        categoryWinners[category] = winners;
+                    }
+                }
+            });
+            
+            // Check if this player is a category winner
+            const resultCategory = existingResult.categoryAtTime || player.category;
+            const playerIsWinner = categoryWinners[resultCategory] && 
+                                   categoryWinners[resultCategory].some(w => w.player.id === playerId);
+            
+            if (!playerIsWinner) {
+                return false;
+            }
+            
+            // Collect all category winners from all categories
+            const allWinners = [];
+            Object.values(categoryWinners).forEach(winners => {
+                winners.forEach(winner => {
+                    allWinners.push(winner);
+                });
+            });
+            
+            // Check if there are multiple category winners with the same total (without rozstrel)
+            // Group winners by total
+            const winnersByTotal = {};
+            allWinners.forEach(winner => {
+                const total = winner.totalWithoutRozstrel;
+                if (!winnersByTotal[total]) {
+                    winnersByTotal[total] = [];
+                }
+                winnersByTotal[total].push(winner);
+            });
+            
+            // Check if this player's total has multiple category winners
+            const winnersWithSameTotal = winnersByTotal[playerTotalWithoutRozstrel] || [];
+            
+            if (winnersWithSameTotal.length > 1) {
+                // Check if this player already has absolute winner rozstrel
+                const hasAbsoluteWinnerRozstrel = competition.absoluteWinnerRozstrel && 
+                                                   competition.absoluteWinnerRozstrel[playerId] !== null && 
+                                                   competition.absoluteWinnerRozstrel[playerId] !== undefined;
+                
+                // Update info text with opponent names and scores
+                const opponentNames = winnersWithSameTotal
+                    .filter(w => w.player.id !== playerId)
+                    .map(w => `${w.player.name} (${w.totalWithoutRozstrel} bodů)`)
+                    .join(', ');
+                
+                if (opponentNames) {
+                    const infoElement = document.getElementById('absolute-winner-rozstrel-info');
+                    if (infoElement) {
+                        infoElement.innerHTML = `Rozstřel o absolutního vítěze je potřeba, protože máte stejný počet bodů (${playerTotalWithoutRozstrel}) jako: <strong>${opponentNames}</strong>.`;
+                    }
+                }
+                
+                return !hasAbsoluteWinnerRozstrel;
+            }
+            
+            return false;
+        }
+
+        function checkExistingRounds() {
+            const competitionId = document.getElementById('result-competition').value;
+            const playerId = document.getElementById('result-player').value;
+            const round1Section = document.getElementById('round1-section');
+            const round2Section = document.getElementById('round2-section');
+            const rozstrelSection = document.getElementById('rozstrel-section');
+            const absoluteWinnerRozstrelSection = document.getElementById('absolute-winner-rozstrel-section');
+            const allRoundsEntered = document.getElementById('all-rounds-entered');
+            const submitBtn = document.getElementById('submit-results-btn');
+            
+            // Hide all sections initially
+            round1Section.style.display = 'none';
+            round2Section.style.display = 'none';
+            rozstrelSection.style.display = 'none';
+            absoluteWinnerRozstrelSection.style.display = 'none';
+            allRoundsEntered.style.display = 'none';
+            submitBtn.style.display = 'none';
+            document.getElementById('result-round1').removeAttribute('required');
+            document.getElementById('result-round2').removeAttribute('required');
+            document.getElementById('result-rozstrel').removeAttribute('required');
+            document.getElementById('result-absolute-winner-rozstrel').removeAttribute('required');
+            
+            if (!competitionId || !playerId) {
+                return;
+            }
+            
+            const allResults = storage.results.getAll();
+            const existingResult = allResults.find(r => 
+                r.playerId === playerId && r.competitionId === competitionId
+            );
+            
+            if (existingResult) {
+                // Check if rounds are entered (null or undefined means not entered, 0 is a valid entry)
+                const hasRound1 = existingResult.round1 !== null && existingResult.round1 !== undefined;
+                const hasRound2 = existingResult.round2 !== null && existingResult.round2 !== undefined;
+                const hasRozstrel = existingResult.rozstrel !== null && existingResult.rozstrel !== undefined;
+                
+                if (hasRound1 && hasRound2) {
+                    // Both rounds entered - check if tiebreaker is needed
+                    const needsCategoryTiebreaker = needsTiebreaker(competitionId, playerId) && !hasRozstrel;
+                    // Check absolute winner tiebreaker - this will check all category winners
+                    const needsAbsoluteTiebreaker = needsAbsoluteWinnerTiebreaker(competitionId, playerId);
+                    
+                    if (needsCategoryTiebreaker) {
+                        // Show category tiebreaker section
+                        rozstrelSection.style.display = 'block';
+                        document.getElementById('result-rozstrel').setAttribute('required', 'required');
+                        submitBtn.style.display = 'block';
+                    } else if (needsAbsoluteTiebreaker) {
+                        // Show absolute winner tiebreaker section
+                        // The info text will be updated by needsAbsoluteWinnerTiebreaker function
+                        absoluteWinnerRozstrelSection.style.display = 'block';
+                        document.getElementById('result-absolute-winner-rozstrel').setAttribute('required', 'required');
+                        submitBtn.style.display = 'block';
+                        // Force update of info text by calling needsAbsoluteWinnerTiebreaker again
+                        needsAbsoluteWinnerTiebreaker(competitionId, playerId);
+                    } else {
+                        // Check if absolute winner tiebreaker might be needed after category tiebreaker is resolved
+                        // This happens when player has category tiebreaker but hasn't entered it yet
+                        if (!hasRozstrel && needsTiebreaker(competitionId, playerId)) {
+                            // Category tiebreaker is needed first, show it
+                            rozstrelSection.style.display = 'block';
+                            document.getElementById('result-rozstrel').setAttribute('required', 'required');
+                            submitBtn.style.display = 'block';
+                        } else {
+                            // All rounds entered (including tiebreakers if needed)
+                            allRoundsEntered.style.display = 'block';
+                        }
+                    }
+                } else if (hasRound1) {
+                    // Only round 1 entered, show round 2
+                    round2Section.style.display = 'block';
+                    document.getElementById('result-round2').setAttribute('required', 'required');
+                    submitBtn.style.display = 'block';
+                } else if (hasRound2) {
+                    // Only round 2 entered, show round 1
+                    round1Section.style.display = 'block';
+                    document.getElementById('result-round1').setAttribute('required', 'required');
+                    submitBtn.style.display = 'block';
+                } else {
+                    // No rounds entered, show both (but not required - user can enter just one)
+                    round1Section.style.display = 'block';
+                    round2Section.style.display = 'block';
+                    // Don't set required - user can enter just one round
+                    submitBtn.style.display = 'block';
+                }
+            } else {
+                // No result exists, show both rounds (but not required - user can enter just one)
+                round1Section.style.display = 'block';
+                round2Section.style.display = 'block';
+                // Don't set required - user can enter just one round
+                submitBtn.style.display = 'block';
+                // Note: rozstrel will be shown automatically after both rounds are entered and saved
+            }
+        }
+
+        // Add results
+        function handleAddResults(event) {
+            event.preventDefault();
+            const competitionId = document.getElementById('result-competition').value;
+            const playerId = document.getElementById('result-player').value;
+            
+            // Check if competition is locked
+            if (isCompetitionLocked(competitionId)) {
+                const alertDiv = document.getElementById('results-alert');
+                alertDiv.innerHTML = '<div class="alert alert-error">Tato soutěž je uzamčená. Výsledky nelze měnit.</div>';
+                return;
+            }
+            const round1Input = document.getElementById('result-round1');
+            const round2Input = document.getElementById('result-round2');
+            const rozstrelInput = document.getElementById('result-rozstrel');
+            const absoluteWinnerRozstrelInput = document.getElementById('result-absolute-winner-rozstrel');
+            const round1Value = round1Input.value ? parseInt(round1Input.value) : null;
+            const round2Value = round2Input.value ? parseInt(round2Input.value) : null;
+            const rozstrelValue = rozstrelInput.value ? parseInt(rozstrelInput.value) : null;
+            const absoluteWinnerRozstrelValue = absoluteWinnerRozstrelInput.value ? parseInt(absoluteWinnerRozstrelInput.value) : null;
+            const alertDiv = document.getElementById('results-alert');
+            
+            if (!competitionId || !playerId) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Vyberte soutěž a hráče</div>';
+                return;
+            }
+            
+            // Get existing result
+            const allResults = storage.results.getAll();
+            let existingResult = allResults.find(r => r.playerId === playerId && r.competitionId === competitionId);
+            
+            // Check if at least one round is being entered
+            if (round1Value === null && round2Value === null && rozstrelValue === null && absoluteWinnerRozstrelValue === null) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Zadejte alespoň jedno kolo</div>';
+                return;
+            }
+            
+            let round1, round2, rozstrel;
+            
+            if (existingResult) {
+                // Keep existing values for rounds that are not being updated
+                round1 = round1Value !== null ? round1Value : (existingResult.round1 !== null && existingResult.round1 !== undefined ? existingResult.round1 : null);
+                round2 = round2Value !== null ? round2Value : (existingResult.round2 !== null && existingResult.round2 !== undefined ? existingResult.round2 : null);
+                rozstrel = rozstrelValue !== null ? rozstrelValue : (existingResult.rozstrel !== null && existingResult.rozstrel !== undefined ? existingResult.rozstrel : null);
+            } else {
+                // New result - use provided values or null if not entered
+                round1 = round1Value !== null ? round1Value : null;
+                round2 = round2Value !== null ? round2Value : null;
+                rozstrel = rozstrelValue !== null ? rozstrelValue : null;
+            }
+            
+            // Validate rounds that are being set
+            if (round1 !== null && (round1 < 0 || round1 > 50)) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Kolo 1 musí být mezi 0 a 50</div>';
+                return;
+            }
+            if (round2 !== null && (round2 < 0 || round2 > 50)) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Kolo 2 musí být mezi 0 a 50</div>';
+                return;
+            }
+            if (rozstrel !== null && (rozstrel < 0 || rozstrel > 50)) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Rozstřel musí být mezi 0 a 50</div>';
+                return;
+            }
+            if (absoluteWinnerRozstrelValue !== null && (absoluteWinnerRozstrelValue < 0 || absoluteWinnerRozstrelValue > 50)) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Rozstřel o absolutního vítěze musí být mezi 0 a 50</div>';
+                return;
+            }
+            
+            // Calculate total without rozstrel - rozstrel is only used for tie-breaking
+            const total = (round1 || 0) + (round2 || 0);
+            
+            // Get player to get current category
+            const player = storage.players.getById(playerId);
+            const playerCategory = player ? player.category : null;
+            
+            // Handle absolute winner rozstrel
+            if (absoluteWinnerRozstrelValue !== null) {
+                const competition = storage.competitions.getById(competitionId);
+                if (competition) {
+                    if (!competition.absoluteWinnerRozstrel) {
+                        competition.absoluteWinnerRozstrel = {};
+                    }
+                    competition.absoluteWinnerRozstrel[playerId] = absoluteWinnerRozstrelValue;
+                    storage.competitions.update(competition);
+                }
+            }
+            
+            if (existingResult) {
+                // Update existing result
+                existingResult.round1 = round1;
+                existingResult.round2 = round2;
+                existingResult.rozstrel = rozstrel;
+                existingResult.total = total;
+                // Update category if not set or if player category changed
+                if (!existingResult.categoryAtTime && playerCategory) {
+                    existingResult.categoryAtTime = playerCategory;
+                }
+                storage.results.update(existingResult);
+                alertDiv.innerHTML = '<div class="alert alert-success">Výsledek byl úspěšně aktualizován!</div>';
+            } else {
+                // Create new result
+                const result = {
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                    playerId: playerId,
+                    competitionId: competitionId,
+                    round1: round1,
+                    round2: round2,
+                    rozstrel: rozstrel,
+                    total: total,
+                    categoryAtTime: playerCategory, // Store category at time of competition
+                    createdAt: new Date().toISOString(),
+                };
+                
+                storage.results.add(result);
+                alertDiv.innerHTML = '<div class="alert alert-success">Výsledek byl úspěšně zaznamenán!</div>';
+            }
+            
+            // Clear inputs
+            round1Input.value = '';
+            round2Input.value = '';
+            rozstrelInput.value = '';
+            absoluteWinnerRozstrelInput.value = '';
+            
+            // Reload players list and check existing rounds
+            // This will automatically show rozstrel section if needed after both rounds are entered
+            loadPlayersByCategory();
+            
+            // After saving, re-check existing rounds to see if absolute winner tiebreaker is needed
+            // This ensures that if two category winners have the same total, both will see the tiebreaker field
+            setTimeout(() => {
+                checkExistingRounds();
+            }, 200);
+            
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 2000);
+        }
+        
+        // Check all category winners to see if they need absolute winner tiebreaker
+        function checkAllCategoryWinnersForAbsoluteTiebreaker(competitionId) {
+            const allResults = storage.results.getAll();
+            const allPlayers = storage.players.getAll();
+            const competition = storage.competitions.getById(competitionId);
+            
+            if (!competition) return;
+            
+            // Get all results for this competition
+            const allCompetitionResults = allResults
+                .filter(r => r.competitionId === competitionId)
+                .map(r => {
+                    const p = allPlayers.find(pl => pl.id === r.playerId);
+                    return p ? { result: r, player: p } : null;
+                })
+                .filter(item => item && item.result.round1 !== null && item.result.round1 !== undefined &&
+                                item.result.round2 !== null && item.result.round2 !== undefined)
+                .map(item => {
+                    const totalWithoutRozstrel = (item.result.round1 || 0) + (item.result.round2 || 0);
+                    return { ...item, totalWithoutRozstrel };
+                });
+            
+            // Group by category and find winners (1st place) in each category
+            const categoryWinners = {};
+            Object.keys(CATEGORY_LABELS).forEach(category => {
+                const categoryResults = allCompetitionResults
+                    .filter(item => {
+                        const resultCategory = item.result.categoryAtTime || item.player.category;
+                        return resultCategory === category;
+                    })
+                    .sort((a, b) => {
+                        if (b.totalWithoutRozstrel !== a.totalWithoutRozstrel) {
+                            return b.totalWithoutRozstrel - a.totalWithoutRozstrel;
+                        }
+                        const rozstrelA = a.result.rozstrel !== null && a.result.rozstrel !== undefined ? a.result.rozstrel : 0;
+                        const rozstrelB = b.result.rozstrel !== null && b.result.rozstrel !== undefined ? b.result.rozstrel : 0;
+                        return rozstrelB - rozstrelA;
+                    });
+                
+                if (categoryResults.length > 0) {
+                    const winnerTotal = categoryResults[0].totalWithoutRozstrel;
+                    const winnerRozstrel = categoryResults[0].result.rozstrel !== null && categoryResults[0].result.rozstrel !== undefined ? categoryResults[0].result.rozstrel : 0;
+                    const winners = categoryResults.filter(item => {
+                        const itemTotal = item.totalWithoutRozstrel;
+                        const itemRozstrel = item.result.rozstrel !== null && item.result.rozstrel !== undefined ? item.result.rozstrel : 0;
+                        return itemTotal === winnerTotal && itemRozstrel === winnerRozstrel;
+                    });
+                    
+                    if (winners.length > 0) {
+                        categoryWinners[category] = winners;
+                    }
+                }
+            });
+            
+            // Collect all category winners
+            const allWinners = [];
+            Object.values(categoryWinners).forEach(winners => {
+                winners.forEach(winner => {
+                    allWinners.push(winner);
+                });
+            });
+            
+            // Group winners by total (without rozstrel)
+            const winnersByTotal = {};
+            allWinners.forEach(winner => {
+                const total = winner.totalWithoutRozstrel;
+                if (!winnersByTotal[total]) {
+                    winnersByTotal[total] = [];
+                }
+                winnersByTotal[total].push(winner);
+            });
+            
+            // For each group of winners with the same total, check if they need absolute winner tiebreaker
+            Object.keys(winnersByTotal).forEach(total => {
+                const winnersWithSameTotal = winnersByTotal[total];
+                if (winnersWithSameTotal.length > 1) {
+                    // Multiple category winners with same total - they need absolute winner tiebreaker
+                    winnersWithSameTotal.forEach(winner => {
+                        const hasAbsoluteWinnerRozstrel = competition.absoluteWinnerRozstrel && 
+                                                           competition.absoluteWinnerRozstrel[winner.player.id] !== null && 
+                                                           competition.absoluteWinnerRozstrel[winner.player.id] !== undefined;
+                        if (!hasAbsoluteWinnerRozstrel) {
+                            // This winner needs absolute winner tiebreaker
+                            // If this player is currently selected in the form, show the field
+                            const currentPlayerId = document.getElementById('result-player')?.value;
+                            if (currentPlayerId === winner.player.id) {
+                                const absoluteWinnerRozstrelSection = document.getElementById('absolute-winner-rozstrel-section');
+                                if (absoluteWinnerRozstrelSection) {
+                                    absoluteWinnerRozstrelSection.style.display = 'block';
+                                    document.getElementById('result-absolute-winner-rozstrel').setAttribute('required', 'required');
+                                    const submitBtn = document.getElementById('submit-results-btn');
+                                    if (submitBtn) {
+                                        submitBtn.style.display = 'block';
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Load competitions select
+        function loadCompetitionsSelect() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                // Podzim je později než jaro, takže podzim má přednost
+                return a.type === 'podzimni' ? -1 : (b.type === 'podzimni' ? 1 : -1);
+            });
+            
+            const select = document.getElementById('results-competition-select');
+            select.innerHTML = '<option value="">-- Vyberte soutěž --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                select.appendChild(option);
+            });
+            
+            // Automatically select the newest competition (first in sorted list)
+            if (competitions.length > 0) {
+                select.value = competitions[0].id;
+                loadCompetitionResults();
+            }
+        }
+
+        // Calculate and display competition results
+        // Recalculate all existing results to ensure total does not include rozstrel
+        function recalculateAllResults() {
+            const allResults = storage.results.getAll();
+            let updated = false;
+            
+            allResults.forEach(result => {
+                // Calculate correct total (round1 + round2, without rozstrel)
+                const correctTotal = (result.round1 || 0) + (result.round2 || 0);
+                
+                // Only update if total is different (might include rozstrel from old data)
+                if (result.total !== correctTotal) {
+                    result.total = correctTotal;
+                    storage.results.update(result);
+                    updated = true;
+                }
+            });
+            
+            if (updated) {
+                console.log('Přepočítány všechny výsledky - total nyní neobsahuje rozstřel');
+            }
+        }
+
+        function calculateResults(competitionId) {
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) return null;
+            
+            const results = storage.results.getByCompetitionId(competitionId);
+            const players = storage.players.getAll();
+            
+            const categoryResults = {
+                'chlapci-do-15': [],
+                'divky-do-15': [],
+                'muzi-od-16': [],
+                'zeny-od-16': [],
+            };
+            
+            results.forEach(result => {
+                const player = players.find(p => p.id === result.playerId);
+                if (!player) {
+                    console.warn('Result without player:', result);
+                    return;
+                }
+                
+                // Ensure total is correct (round1 + round2, without rozstrel)
+                const correctTotal = (result.round1 || 0) + (result.round2 || 0);
+                if (result.total !== correctTotal) {
+                    result.total = correctTotal;
+                    storage.results.update(result);
+                }
+                
+                // Use categoryAtTime from result if available, otherwise use current player category
+                // This preserves the original category for old results when player was transferred
+                const resultCategory = result.categoryAtTime || player.category;
+                
+                if (!categoryResults[resultCategory]) {
+                    console.warn('Unknown category:', resultCategory);
+                    return;
+                }
+                
+                categoryResults[resultCategory].push({
+                    player: player,
+                    result: result,
+                    position: 0,
+                });
+            });
+            
+            Object.keys(categoryResults).forEach(category => {
+                const resultsList = categoryResults[category];
+                // Sort by total descending, then by rozstrel descending (if total is equal)
+                // Total does not include rozstrel - rozstrel is only used for tie-breaking
+                resultsList.sort((a, b) => {
+                    if (b.result.total !== a.result.total) {
+                        return b.result.total - a.result.total;
+                    }
+                    // If same total, sort by rozstrel (higher rozstrel first)
+                    // Treat null rozstrel as 0 for comparison
+                    const rozstrelA = a.result.rozstrel !== null && a.result.rozstrel !== undefined ? a.result.rozstrel : 0;
+                    const rozstrelB = b.result.rozstrel !== null && b.result.rozstrel !== undefined ? b.result.rozstrel : 0;
+                    if (rozstrelB !== rozstrelA) {
+                        return rozstrelB - rozstrelA;
+                    }
+                    // If same total and same rozstrel, keep original order (no alphabetical sorting for positions 1-3)
+                    // We'll handle alphabetical sorting for positions 4+ later
+                    return 0;
+                });
+                
+                // Assign positions with shared positions for ties from 4th place onwards
+                let currentPosition = 1;
+                let i = 0;
+                while (i < resultsList.length) {
+                    const currentTotal = resultsList[i].result.total;
+                    const currentRozstrel = resultsList[i].result.rozstrel !== null && resultsList[i].result.rozstrel !== undefined ? resultsList[i].result.rozstrel : 0;
+                    const startIndex = i;
+                    
+                    // Find all players with the same total AND same rozstrel
+                    while (i < resultsList.length && 
+                           resultsList[i].result.total === currentTotal &&
+                           (resultsList[i].result.rozstrel !== null && resultsList[i].result.rozstrel !== undefined ? resultsList[i].result.rozstrel : 0) === currentRozstrel) {
+                        i++;
+                    }
+                    
+                    const endIndex = i - 1;
+                    const count = endIndex - startIndex + 1;
+                    
+                    // For positions 1-3, assign individual positions (no alphabetical sorting)
+                    if (currentPosition <= 3) {
+                        // Individual position, keep original order
+                        for (let j = startIndex; j <= endIndex; j++) {
+                            resultsList[j].position = currentPosition;
+                            resultsList[j].positionText = currentPosition + '.';
+                        }
+                        currentPosition += count;
+                    } else {
+                        // For positions 4+, sort alphabetically by surname if there's a tie
+                        if (count > 1) {
+                            // Sort this group alphabetically by surname
+                            const tiedGroup = resultsList.slice(startIndex, endIndex + 1);
+                            tiedGroup.sort((a, b) => {
+                                const surnameA = getSurname(a.player.name);
+                                const surnameB = getSurname(b.player.name);
+                                return surnameA.localeCompare(surnameB, 'cs');
+                            });
+                            // Put sorted group back
+                            for (let k = 0; k < tiedGroup.length; k++) {
+                                resultsList[startIndex + k] = tiedGroup[k];
+                            }
+                        }
+                        
+                        // Shared position (e.g., "6.-7.")
+                        const startPos = currentPosition;
+                        const endPos = currentPosition + count - 1;
+                        const positionText = startPos === endPos ? startPos + '.' : startPos + '.-' + endPos + '.';
+                        for (let j = startIndex; j <= endIndex; j++) {
+                            resultsList[j].position = startPos;
+                            resultsList[j].positionText = positionText;
+                        }
+                        currentPosition += count;
+                    }
+                }
+            });
+            
+            // Find category winners (1st place in each category)
+            const categoryWinners = [];
+            Object.keys(categoryResults).forEach(category => {
+                const resultsList = categoryResults[category];
+                if (resultsList.length > 0) {
+                    // Get winner(s) - players with position 1
+                    const winners = resultsList.filter(item => item.position === 1);
+                    winners.forEach(winner => {
+                        categoryWinners.push({
+                            player: winner.player,
+                            result: winner.result,
+                            category: category
+                        });
+                    });
+                }
+            });
+            
+            // Find absolute winner among category winners
+            // First, sort by total (without rozstrel), then by absolute winner rozstrel
+            let absoluteWinner = null;
+            let maxTotal = -1;
+            let maxAbsoluteWinnerRozstrel = -1;
+            
+            categoryWinners.forEach(winner => {
+                const winnerTotal = winner.result.total;
+                const absoluteWinnerRozstrel = competition.absoluteWinnerRozstrel && 
+                                                competition.absoluteWinnerRozstrel[winner.player.id] !== null && 
+                                                competition.absoluteWinnerRozstrel[winner.player.id] !== undefined
+                                                ? competition.absoluteWinnerRozstrel[winner.player.id] : 0;
+                
+                // Compare by total first, then by absolute winner rozstrel
+                if (winnerTotal > maxTotal || 
+                    (winnerTotal === maxTotal && absoluteWinnerRozstrel > maxAbsoluteWinnerRozstrel)) {
+                    maxTotal = winnerTotal;
+                    maxAbsoluteWinnerRozstrel = absoluteWinnerRozstrel;
+                    absoluteWinner = { player: winner.player, result: winner.result };
+                }
+            });
+            
+            return {
+                competition,
+                categoryResults,
+                absoluteWinner,
+            };
+        }
+
+        function loadCompetitionResults() {
+            const competitionId = document.getElementById('results-competition-select').value;
+            const selectedCategory = document.getElementById('results-category-select').value;
+            const contentDiv = document.getElementById('results-content');
+            
+            if (!competitionId) {
+                contentDiv.innerHTML = '';
+                return;
+            }
+            
+            const results = calculateResults(competitionId);
+            
+            // Store competitionId for delete function
+            window.currentCompetitionId = competitionId;
+            if (!results) {
+                contentDiv.innerHTML = '<p style="color: #999;">Soutěž nenalezena</p>';
+                return;
+            }
+            
+            let html = `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: #8b6914;">
+                    ${formatCompetitionLabel(results.competition)}
+                </h3>
+                <button class="btn btn-primary" onclick="generatePDF('${competitionId}', '${selectedCategory || ''}')" style="padding: 0.5rem 1rem;">
+                    📄 Stáhnout PDF
+                </button>
+            </div>`;
+            
+            // Filter absolute winner by category if category is selected
+            let displayAbsoluteWinner = results.absoluteWinner;
+            if (selectedCategory && displayAbsoluteWinner && displayAbsoluteWinner.player.category !== selectedCategory) {
+                displayAbsoluteWinner = null;
+            }
+            
+            if (displayAbsoluteWinner) {
+                const absoluteWinnerRozstrel = results.competition.absoluteWinnerRozstrel && 
+                                                results.competition.absoluteWinnerRozstrel[displayAbsoluteWinner.player.id] !== null && 
+                                                results.competition.absoluteWinnerRozstrel[displayAbsoluteWinner.player.id] !== undefined
+                                                ? results.competition.absoluteWinnerRozstrel[displayAbsoluteWinner.player.id] : null;
+                
+                // Find all category winners with the same total to show tiebreaker opponents
+                const allCategoryWinners = [];
+                Object.keys(results.categoryResults).forEach(category => {
+                    const resultsList = results.categoryResults[category];
+                    if (resultsList.length > 0) {
+                        const winners = resultsList.filter(item => item.position === 1);
+                        winners.forEach(winner => {
+                            allCategoryWinners.push({
+                                player: winner.player,
+                                result: winner.result,
+                                category: category
+                            });
+                        });
+                    }
+                });
+                
+                // Find opponents with same total
+                const opponentsWithSameTotal = allCategoryWinners.filter(w => 
+                    w.result.total === displayAbsoluteWinner.result.total && 
+                    w.player.id !== displayAbsoluteWinner.player.id
+                );
+                
+                let rozstrelText = '';
+                if (absoluteWinnerRozstrel !== null && opponentsWithSameTotal.length > 0) {
+                    // Format: "Rozstřel o absolutního vítěze (44) s Markéta Sedláčková (34)"
+                    const opponentsList = opponentsWithSameTotal.map(opp => {
+                        const oppRozstrel = results.competition.absoluteWinnerRozstrel && 
+                                          results.competition.absoluteWinnerRozstrel[opp.player.id] !== null && 
+                                          results.competition.absoluteWinnerRozstrel[opp.player.id] !== undefined
+                                          ? results.competition.absoluteWinnerRozstrel[opp.player.id] : null;
+                        if (oppRozstrel !== null) {
+                            return `${opp.player.name} (${oppRozstrel})`;
+                        }
+                        return null;
+                    }).filter(opp => opp !== null).join(', ');
+                    
+                    if (opponentsList) {
+                        rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel}) s ${opponentsList}`;
+                    } else {
+                        rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel})`;
+                    }
+                } else if (absoluteWinnerRozstrel !== null) {
+                    rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel})`;
+                }
+                
+                html += `<div style="margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #daa520 0%, #cd853f 100%); color: white; border-radius: 10px;">
+                    <h4 style="margin-bottom: 0.5rem;">🏆 Absolutní vítěz</h4>
+                    <p style="font-size: 1.2rem;">
+                        <strong>${displayAbsoluteWinner.player.name}</strong> - ${displayAbsoluteWinner.result.total} bodů${rozstrelText ? '<br>' + rozstrelText : ''}<br>
+                        <small>(${CATEGORY_LABELS[displayAbsoluteWinner.player.category]})</small>
+                    </p>
+                </div>`;
+            }
+            
+            // Filter categories based on selection
+            const categoriesToShow = selectedCategory 
+                ? [[selectedCategory, results.categoryResults[selectedCategory] || []]]
+                : Object.entries(results.categoryResults);
+            
+            categoriesToShow.forEach(([category, categoryResultsArray]) => {
+                // Ensure categoryResults is an array
+                if (!Array.isArray(categoryResultsArray)) {
+                    categoryResultsArray = [];
+                }
+                
+                html += `<div style="margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: #555;">${CATEGORY_LABELS[category]}</h4>`;
+                
+                if (categoryResultsArray.length === 0) {
+                    html += `<p style="color: #999;">Žádné výsledky v této kategorii</p>`;
+                } else {
+                    html += `<table class="table">
+                        <thead>
+                            <tr>
+                                <th>Umístění</th>
+                                <th>Jméno</th>
+                                <th>Kolo 1</th>
+                                <th>Kolo 2</th>
+                                <th>Rozstřel</th>
+                                <th>Celkem</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    
+                    // Display all results, including those with 0 points
+                    categoryResultsArray.forEach((item, index) => {
+                        const badge = item.position === 1 ? '🥇' : item.position === 2 ? '🥈' : item.position === 3 ? '🥉' : '';
+                        const badgeClass = item.position === 1 ? 'badge-gold' : item.position === 2 ? 'badge-silver' : item.position === 3 ? 'badge-bronze' : '';
+                        // Use positionText if available (for shared positions), otherwise use position
+                        const displayPositionText = item.positionText || (item.position <= 3 ? badge : item.position + '.');
+                        
+                        const rozstrelValue = item.result.rozstrel !== null && item.result.rozstrel !== undefined ? item.result.rozstrel : '-';
+                        html += `<tr>
+                            <td>${displayPositionText} ${badgeClass ? `<span class="badge ${badgeClass}">${item.position}.</span>` : ''}</td>
+                            <td><strong>${item.player.name}</strong></td>
+                            <td>${item.result.round1 !== null && item.result.round1 !== undefined ? item.result.round1 : '-'}</td>
+                            <td>${item.result.round2 !== null && item.result.round2 !== undefined ? item.result.round2 : '-'}</td>
+                            <td>${rozstrelValue}</td>
+                            <td><strong>${item.result.total}</strong></td>
+                        </tr>`;
+                    });
+                    
+                    html += `</tbody></table>`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            contentDiv.innerHTML = html;
+        }
+
+        // Generate PDF results list using html2pdf.js (better UTF-8 support)
+        async function generatePDF(competitionId, selectedCategory) {
+            // Check if html2pdf is available
+            if (typeof html2pdf === 'undefined') {
+                alert('Knihovna pro generování PDF není načtena. Obnovte prosím stránku.');
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) {
+                alert('Soutěž nenalezena');
+                return;
+            }
+            
+            const results = calculateResults(competitionId);
+            if (!results) {
+                alert('Nelze načíst výsledky');
+                return;
+            }
+            
+            // Filter categories based on selection
+            const categoriesToShow = selectedCategory 
+                ? [[selectedCategory, results.categoryResults[selectedCategory] || []]]
+                : Object.entries(results.categoryResults);
+            
+            // Check if there are any results
+            const hasResults = categoriesToShow.some(([_, arr]) => Array.isArray(arr) && arr.length > 0);
+            if (!hasResults) {
+                alert('Nejsou k dispozici žádné výsledky pro generování PDF.');
+                return;
+            }
+            
+            // Create HTML content for PDF - simplified structure for better html2canvas capture
+            // Add CSS for preventing table breaks - move entire table to next page if it doesn't fit
+            let htmlContent = '<style>'
+                + 'table { page-break-inside: avoid !important; break-inside: avoid !important; } '
+                + 'thead { display: table-header-group; page-break-after: avoid !important; } '
+                + 'tbody { display: table-row-group; page-break-inside: avoid !important; break-inside: avoid !important; } '
+                + 'tr { page-break-inside: avoid !important; break-inside: avoid !important; } '
+                + '.category-section { page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: auto !important; } '
+                + '</style>';
+            htmlContent += '<div style="font-family: Arial, sans-serif; padding: 20px; background: white; color: #000000;">';
+            htmlContent += '<div style="text-align: center; margin-bottom: 30px;">';
+            htmlContent += '<h1 style="font-size: 24px; font-weight: bold; margin: 10px 0; color: #8b6914;">Střelby ze vzduchovek</h1>';
+            htmlContent += `<h2 style="font-size: 16px; margin: 10px 0; color: #333333;">${formatCompetitionLabel(competition)}</h2>`;
+            htmlContent += '</div>';
+            
+            // Show absolute winner if all categories are shown
+            if (!selectedCategory && results.absoluteWinner) {
+                const absoluteWinnerRozstrel = results.competition.absoluteWinnerRozstrel && 
+                                                results.competition.absoluteWinnerRozstrel[results.absoluteWinner.player.id] !== null && 
+                                                results.competition.absoluteWinnerRozstrel[results.absoluteWinner.player.id] !== undefined
+                                                ? results.competition.absoluteWinnerRozstrel[results.absoluteWinner.player.id] : null;
+                
+                // Find all category winners with the same total to show tiebreaker opponents
+                const allCategoryWinners = [];
+                Object.keys(results.categoryResults).forEach(category => {
+                    const resultsList = results.categoryResults[category];
+                    if (resultsList.length > 0) {
+                        const winners = resultsList.filter(item => item.position === 1);
+                        winners.forEach(winner => {
+                            allCategoryWinners.push({
+                                player: winner.player,
+                                result: winner.result,
+                                category: category
+                            });
+                        });
+                    }
+                });
+                
+                // Find opponents with same total
+                const opponentsWithSameTotal = allCategoryWinners.filter(w => 
+                    w.result.total === results.absoluteWinner.result.total && 
+                    w.player.id !== results.absoluteWinner.player.id
+                );
+                
+                let rozstrelText = '';
+                if (absoluteWinnerRozstrel !== null && opponentsWithSameTotal.length > 0) {
+                    // Format: "Rozstřel o absolutního vítěze (44) s Markéta Sedláčková (34)"
+                    const opponentsList = opponentsWithSameTotal.map(opp => {
+                        const oppRozstrel = results.competition.absoluteWinnerRozstrel && 
+                                          results.competition.absoluteWinnerRozstrel[opp.player.id] !== null && 
+                                          results.competition.absoluteWinnerRozstrel[opp.player.id] !== undefined
+                                          ? results.competition.absoluteWinnerRozstrel[opp.player.id] : null;
+                        if (oppRozstrel !== null) {
+                            return `${opp.player.name} (${oppRozstrel})`;
+                        }
+                        return null;
+                    }).filter(opp => opp !== null).join(', ');
+                    
+                    if (opponentsList) {
+                        rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel}) s ${opponentsList}`;
+                    } else {
+                        rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel})`;
+                    }
+                } else if (absoluteWinnerRozstrel !== null) {
+                    rozstrelText = `Rozstřel o absolutního vítěze (${absoluteWinnerRozstrel})`;
+                }
+                
+                htmlContent += '<div style="margin-bottom: 30px; padding: 15px; border: 3px solid #daa520; border-radius: 10px; text-align: center; background: white; page-break-inside: avoid; break-inside: avoid;">';
+                htmlContent += '<h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #8b6914;">🏆 Absolutní vítěz</h3>';
+                htmlContent += `<p style="font-size: 16px; color: #000000; margin: 5px 0;"><strong>${results.absoluteWinner.player.name}</strong> - ${results.absoluteWinner.result.total} bodů</p>`;
+                htmlContent += `<p style="font-size: 14px; color: #666666; margin: 5px 0;">(${CATEGORY_LABELS[results.absoluteWinner.player.category]})</p>`;
+                if (rozstrelText) {
+                    htmlContent += `<p style="font-size: 16px; color: #000000; margin: 5px 0;">${rozstrelText}</p>`;
+                }
+                htmlContent += '</div>';
+            }
+            
+            // Process each category
+            categoriesToShow.forEach(([category, categoryResultsArray]) => {
+                if (!Array.isArray(categoryResultsArray) || categoryResultsArray.length === 0) {
+                    return;
+                }
+                
+                htmlContent += '<div class="category-section" style="margin-bottom: 30px; page-break-inside: avoid !important; break-inside: avoid !important; page-break-before: auto;">';
+                htmlContent += `<h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #555555; page-break-after: avoid !important;">${CATEGORY_LABELS[category]}</h3>`;
+                htmlContent += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #cccccc; page-break-inside: avoid !important; break-inside: avoid !important;">';
+                htmlContent += '<thead style="display: table-header-group; page-break-inside: avoid; break-inside: avoid;">';
+                htmlContent += '<tr style="background-color: #f5f5f5; page-break-inside: avoid; break-inside: avoid;">';
+                htmlContent += '<th style="padding: 8px; text-align: center; border: 1px solid #cccccc; font-weight: bold;">Pořadí</th>';
+                htmlContent += '<th style="padding: 8px; text-align: left; border: 1px solid #cccccc; font-weight: bold;">Jméno</th>';
+                htmlContent += '<th style="padding: 8px; text-align: center; border: 1px solid #cccccc; font-weight: bold;">Kolo 1</th>';
+                htmlContent += '<th style="padding: 8px; text-align: center; border: 1px solid #cccccc; font-weight: bold;">Kolo 2</th>';
+                htmlContent += '<th style="padding: 8px; text-align: center; border: 1px solid #cccccc; font-weight: bold;">Rozstřel</th>';
+                htmlContent += '<th style="padding: 8px; text-align: center; border: 1px solid #cccccc; font-weight: bold;">Celkem bodů</th>';
+                htmlContent += '</tr>';
+                htmlContent += '</thead>';
+                htmlContent += '<tbody style="page-break-inside: avoid; break-inside: avoid; display: table-row-group;">';
+                
+                categoryResultsArray.forEach((item) => {
+                    const round1 = item.result.round1 !== null && item.result.round1 !== undefined ? item.result.round1 : '-';
+                    const round2 = item.result.round2 !== null && item.result.round2 !== undefined ? item.result.round2 : '-';
+                    const rozstrel = item.result.rozstrel !== null && item.result.rozstrel !== undefined ? item.result.rozstrel : '-';
+                    htmlContent += '<tr style="page-break-inside: avoid; break-inside: avoid;">';
+                    const pdfPositionText = item.positionText || (item.position + '.');
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; text-align: center;">${pdfPositionText}</td>`;
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; color: #000000; font-weight: normal; text-align: left;">${item.player.name}</td>`;
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; text-align: center;">${round1}</td>`;
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; text-align: center;">${round2}</td>`;
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; text-align: center;">${rozstrel}</td>`;
+                    htmlContent += `<td style="padding: 6px; border: 1px solid #cccccc; text-align: center; font-weight: bold;">${item.result.total}</td>`;
+                    htmlContent += '</tr>';
+                });
+                
+                htmlContent += '</tbody>';
+                htmlContent += '</table>';
+                htmlContent += '</div>';
+            });
+            
+            htmlContent += '</div>';
+            
+            // Create temporary element for PDF generation - hidden from user
+            const tempDiv = document.createElement('div');
+            tempDiv.id = 'pdf-content-temp';
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.top = '0';
+            tempDiv.style.left = '-9999px'; // Move off-screen
+            tempDiv.style.width = '210mm';
+            tempDiv.style.maxWidth = '210mm';
+            tempDiv.style.backgroundColor = 'white';
+            tempDiv.style.color = '#000000';
+            tempDiv.style.fontFamily = 'Arial, sans-serif';
+            tempDiv.style.fontSize = '12px';
+            tempDiv.style.lineHeight = '1.5';
+            tempDiv.style.visibility = 'hidden'; // Hide but keep in layout
+            tempDiv.style.opacity = '0';
+            tempDiv.style.pointerEvents = 'none';
+            // Add CSS for print media to prevent table breaks - move entire table to next page if it doesn't fit
+            const style = document.createElement('style');
+            style.setAttribute('data-pdf-style', 'true');
+            style.textContent = `
+                @media print {
+                    .category-section {
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
+                        page-break-before: auto !important;
+                    }
+                    table, thead, tbody, tr {
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
+                    }
+                    thead {
+                        page-break-after: avoid !important;
+                    }
+                }
+                .category-section {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                }
+                table {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                }
+            `;
+            document.head.appendChild(style);
+            tempDiv.innerHTML = htmlContent;
+            document.body.appendChild(tempDiv);
+            
+            // Force layout
+            const height = tempDiv.offsetHeight;
+            const width = tempDiv.offsetWidth;
+            
+            // Wait for content to render
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Try using html2canvas directly first to debug
+            try {
+                const canvas = await html2canvas(tempDiv, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    width: width,
+                    height: height,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0,
+                    allowTaint: true,
+                    onclone: (clonedDoc) => {
+                        // Ensure all text is visible in cloned document
+                        const clonedElement = clonedDoc.getElementById('pdf-content-temp');
+                        if (clonedElement) {
+                            clonedElement.style.visibility = 'visible';
+                            clonedElement.style.opacity = '1';
+                            clonedElement.style.display = 'block';
+                        }
+                    }
+                });
+                
+                // Convert canvas to PDF using jsPDF
+                const { jsPDF } = window.jspdf;
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                const pdf = new jsPDF('portrait', 'mm', 'a4');
+                
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // Calculate how many pages we need
+                const totalPages = Math.ceil(imgHeight / pageHeight);
+                
+                // Add image to each page, ensuring tables don't break
+                for (let i = 0; i < totalPages; i++) {
+                    if (i > 0) {
+                        pdf.addPage();
+                    }
+                    const yPosition = -(i * pageHeight);
+                    pdf.addImage(imgData, 'JPEG', 0, yPosition, imgWidth, imgHeight);
+                }
+                
+                const fileName = `Vysledkova_listina_${formatCompetitionLabel(competition).replace(/\s+/g, '_')}${selectedCategory ? '_' + CATEGORY_LABELS[selectedCategory].replace(/\s+/g, '_') : ''}.pdf`;
+                pdf.save(fileName);
+                
+            } catch (error) {
+                console.error('Chyba při generování PDF:', error);
+                alert('Nepodařilo se vygenerovat PDF: ' + (error.message || 'Neznámá chyba'));
+            } finally {
+                // Remove temporary element and style
+                const element = document.getElementById('pdf-content-temp');
+                if (element && element.parentNode) {
+                    element.parentNode.removeChild(element);
+                }
+                // Remove added style if exists
+                const addedStyle = document.querySelector('style[data-pdf-style]');
+                if (addedStyle) {
+                    addedStyle.remove();
+                }
+            }
+        }
+
+        // Load players select for history
+        function loadPlayersSelect() {
+            const players = storage.players.getAll().sort((a, b) => {
+                const surnameA = getSurname(a.name);
+                const surnameB = getSurname(b.name);
+                return surnameA.localeCompare(surnameB, 'cs');
+            });
+            
+            const select = document.getElementById('history-player-select');
+            select.innerHTML = '<option value="">-- Vyberte hráče --</option>';
+            players.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = player.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Load player history
+        function getPlayerHistory(playerId) {
+            const results = storage.results.getByPlayerId(playerId);
+            const competitions = storage.competitions.getAll();
+            const player = storage.players.getById(playerId);
+            
+            return results
+                .map(result => {
+                    const competition = competitions.find(c => c.id === result.competitionId);
+                    if (!competition) return null;
+                    
+                    // Don't update categoryAtTime for existing results - it should preserve the original category
+                    // Only set it if it's truly missing (for very old results without this field)
+                    // But don't overwrite it with current category if player was transferred
+                    
+                    return { competition, result };
+                })
+                .filter(item => item !== null)
+                .sort((a, b) => {
+                    // Sort from newest to oldest (youngest first = newest first)
+                    if (a.competition.year !== b.competition.year) {
+                        return b.competition.year - a.competition.year; // Newer year first (youngest = newest)
+                    }
+                    // If same year, podzimni is later in the year than jarni
+                    // So when sorting newest to oldest, podzimni should come first
+                    return a.competition.type === 'podzimni' ? -1 : 1;
+                });
+        }
+
+        function loadPlayerHistory() {
+            const playerId = document.getElementById('history-player-select').value;
+            const contentDiv = document.getElementById('history-content');
+            
+            if (!playerId) {
+                contentDiv.innerHTML = '';
+                return;
+            }
+            
+            const player = storage.players.getById(playerId);
+            const history = getPlayerHistory(playerId);
+            
+            if (!player) {
+                contentDiv.innerHTML = '<p style="color: #999;">Hráč nenalezen</p>';
+                return;
+            }
+            
+            let html = `<h3 style="margin-bottom: 1rem; color: #8b6914;">Historie: ${player.name}</h3>`;
+            
+            if (history.length === 0) {
+                html += `<p style="color: #999;">Tento hráč zatím nemá žádné výsledky.</p>`;
+            } else {
+                html += `<table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Soutěž</th>
+                            <th>Rok</th>
+                            <th>Kategorie</th>
+                            <th>Kolo 1</th>
+                            <th>Kolo 2</th>
+                            <th>Celkem</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                history.forEach((item, index) => {
+                    // Get category at time of competition, or use current player category as fallback
+                    const categoryAtTime = item.result.categoryAtTime || player.category;
+                    const categoryLabel = CATEGORY_LABELS[categoryAtTime] || categoryAtTime;
+                    // Check if category changed
+                    const categoryChanged = item.result.categoryAtTime && item.result.categoryAtTime !== player.category;
+                    const categoryDisplay = categoryChanged 
+                        ? `<span title="Kategorie se změnila z ${CATEGORY_LABELS[item.result.categoryAtTime]} na ${CATEGORY_LABELS[player.category]}">${categoryLabel} <small style="color: #999;">(změna)</small></span>`
+                        : categoryLabel;
+                    
+                    html += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${formatCompetitionLabel(item.competition)}</td>
+                        <td>${item.competition.year}</td>
+                        <td>${categoryDisplay}</td>
+                        <td>${item.result.round1 !== null && item.result.round1 !== undefined ? item.result.round1 : '-'}</td>
+                        <td>${item.result.round2 !== null && item.result.round2 !== undefined ? item.result.round2 : '-'}</td>
+                        <td><strong>${item.result.total}</strong></td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                
+                const avgScore = Math.round(history.reduce((sum, item) => sum + item.result.total, 0) / history.length);
+                const maxScore = Math.max(...history.map(item => item.result.total));
+                
+                html += `<div style="margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 5px;">
+                    <p><strong>Průměrný výsledek:</strong> ${avgScore} bodů</p>
+                    <p><strong>Nejlepší výsledek:</strong> ${maxScore} bodů</p>
+                </div>`;
+            }
+            
+            contentDiv.innerHTML = html;
+        }
+
+        // Calculate statistics
+        function calculateStatistics() {
+            const players = storage.players.getAll();
+            const competitions = storage.competitions.getAll();
+            const results = storage.results.getAll();
+            
+            const categoryMaxResults = [];
+            const categories = ['chlapci-do-15', 'divky-do-15', 'muzi-od-16', 'zeny-od-16'];
+            
+            categories.forEach(category => {
+                const categoryPlayers = players.filter(p => p.category === category);
+                let maxScore = -1;
+                let maxResult = null;
+                let maxPlayer = null;
+                let maxCompetition = null;
+                
+                categoryPlayers.forEach(player => {
+                    const playerResults = results.filter(r => r.playerId === player.id);
+                    playerResults.forEach(result => {
+                        if (result.total > maxScore) {
+                            maxScore = result.total;
+                            maxResult = result;
+                            maxPlayer = player;
+                            maxCompetition = competitions.find(c => c.id === result.competitionId);
+                        }
+                    });
+                });
+                
+                if (maxResult && maxPlayer && maxCompetition) {
+                    categoryMaxResults.push({
+                        category,
+                        maxScore,
+                        player: maxPlayer,
+                        competition: maxCompetition,
+                        result: maxResult,
+                    });
+                }
+            });
+            
+            let overallMaxScore = -1;
+            let overallMaxResult = null;
+            let overallMaxPlayer = null;
+            let overallMaxCompetition = null;
+            
+            results.forEach(result => {
+                if (result.total > overallMaxScore) {
+                    overallMaxScore = result.total;
+                    overallMaxResult = result;
+                    overallMaxPlayer = players.find(p => p.id === result.playerId);
+                    overallMaxCompetition = competitions.find(c => c.id === result.competitionId);
+                }
+            });
+            
+            return {
+                categoryMaxResults,
+                overallMaxResult: overallMaxResult && overallMaxPlayer && overallMaxCompetition
+                    ? {
+                        maxScore: overallMaxScore,
+                        player: overallMaxPlayer,
+                        competition: overallMaxCompetition,
+                        result: overallMaxResult,
+                    }
+                    : null,
+                totalPlayers: players.length,
+                totalCompetitions: competitions.length,
+                totalResults: results.length,
+            };
+        }
+
+        function loadStatistics() {
+            const stats = calculateStatistics();
+            const contentDiv = document.getElementById('statistics-content');
+            
+            let html = `<div class="stats-grid" style="margin-top: 2rem;">
+                <div class="stat-card">
+                    <h3>${stats.totalPlayers}</h3>
+                    <p>Celkem hráčů</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.totalCompetitions}</h3>
+                    <p>Celkem soutěží</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.totalResults}</h3>
+                    <p>Celkem výsledků</p>
+                </div>
+            </div>`;
+            
+            if (stats.overallMaxResult) {
+                html += `<div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); border-radius: 10px; border: 3px solid #ffd700;">
+                    <h3 style="margin-bottom: 1rem;">🏆 Absolutní rekord</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                        <strong>${stats.overallMaxResult.player.name}</strong>
+                    </p>
+                    <p style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">
+                        ${stats.overallMaxResult.maxScore} bodů
+                    </p>
+                    <p>
+                        ${formatCompetitionLabel(stats.overallMaxResult.competition)}<br>
+                        <small>(${CATEGORY_LABELS[stats.overallMaxResult.player.category]})</small>
+                    </p>
+                </div>`;
+            }
+            
+            // Add absolute winners for each competition
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                // Sort from newest to oldest (youngest first = newest first)
+                if (a.year !== b.year) return b.year - a.year; // Newer year first
+                // If same year, podzimni is later in the year than jarni
+                // So when sorting newest to oldest, podzimni should come first
+                return a.type === 'podzimni' ? -1 : 1;
+            });
+            
+            const competitionWinners = [];
+            competitions.forEach(competition => {
+                const compResults = calculateResults(competition.id);
+                if (compResults && compResults.absoluteWinner) {
+                    competitionWinners.push({
+                        competition,
+                        winner: compResults.absoluteWinner
+                    });
+                }
+            });
+            
+            if (competitionWinners.length > 0) {
+                html += `<div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: #8b6914;">🏆 Absolutní vítězové podle soutěží</h3>`;
+                
+                competitionWinners.forEach(({ competition, winner }) => {
+                    html += `<div style="margin-bottom: 1rem; padding: 1.5rem; background: linear-gradient(135deg, #daa520 0%, #cd853f 100%); border-radius: 10px; border: 2px solid #b8860b;">
+                        <h4 style="margin-bottom: 0.5rem; color: white;">${formatCompetitionLabel(competition)}</h4>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: white;">
+                            <strong>${winner.player.name}</strong> - ${winner.result.total} bodů
+                        </p>
+                        <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;">
+                            ${CATEGORY_LABELS[winner.player.category]} | Kolo 1: ${winner.result.round1 !== null && winner.result.round1 !== undefined ? winner.result.round1 : '-'} | Kolo 2: ${winner.result.round2 !== null && winner.result.round2 !== undefined ? winner.result.round2 : '-'}
+                        </p>
+                    </div>`;
+                });
+                
+                html += `</div>`;
+            }
+            
+            html += `<div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #8b6914;">Maximální výsledky podle kategorií</h3>`;
+            
+            if (stats.categoryMaxResults.length === 0) {
+                html += `<p style="color: #999;">Zatím nejsou k dispozici žádné statistiky.</p>`;
+            } else {
+                stats.categoryMaxResults.forEach(categoryStat => {
+                    html += `<div style="margin-bottom: 1rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px; border: 2px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 0.5rem; color: #555;">${CATEGORY_LABELS[categoryStat.category]}</h4>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            <strong>${categoryStat.player.name}</strong> - ${categoryStat.maxScore} bodů
+                        </p>
+                        <p style="color: #666; font-size: 0.9rem;">
+                            ${formatCompetitionLabel(categoryStat.competition)}<br>
+                            Kolo 1: ${categoryStat.result.round1 !== null && categoryStat.result.round1 !== undefined ? categoryStat.result.round1 : '-'} | Kolo 2: ${categoryStat.result.round2 !== null && categoryStat.result.round2 !== undefined ? categoryStat.result.round2 : '-'}
+                        </p>
+                    </div>`;
+                });
+            }
+            
+            html += `</div>`;
+            
+            // Add players count per competition
+            html += `<div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #8b6914;">Počet hráčů podle soutěží</h3>`;
+            
+            const allPlayers = storage.players.getAll();
+            const allResults = storage.results.getAll();
+            
+            competitions.forEach(competition => {
+                // Get all unique player IDs who have results in this competition
+                const playerIdsInCompetition = new Set(
+                    allResults
+                        .filter(r => r.competitionId === competition.id)
+                        .map(r => r.playerId)
+                );
+                
+                // Get players with their categories
+                const playersInCompetition = allPlayers.filter(p => playerIdsInCompetition.has(p.id));
+                
+                // Count players by category
+                const categoryCounts = {
+                    'chlapci-do-15': 0,
+                    'divky-do-15': 0,
+                    'muzi-od-16': 0,
+                    'zeny-od-16': 0
+                };
+                
+                playersInCompetition.forEach(player => {
+                    if (categoryCounts.hasOwnProperty(player.category)) {
+                        categoryCounts[player.category]++;
+                    }
+                });
+                
+                const totalPlayers = playersInCompetition.length;
+                
+                // Get category results to find winners
+                const compResults = calculateResults(competition.id);
+                
+                if (totalPlayers > 0) {
+                    html += `<div style="margin-bottom: 1rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px; border: 2px solid #e0e0e0;">
+                        <h4 style="margin-bottom: 0.75rem; color: #555;">${formatCompetitionLabel(competition)}</h4>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.75rem; font-weight: bold; color: #8b6914;">
+                            Celkem hráčů: ${totalPlayers}
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin-top: 0.5rem;">`;
+                    
+                    Object.entries(categoryCounts).forEach(([category, count]) => {
+                        if (count > 0) {
+                            // Find winner in this category
+                            let winnerInfo = '';
+                            if (compResults && compResults.categoryResults && compResults.categoryResults[category]) {
+                                const categoryResultsArray = compResults.categoryResults[category];
+                                if (Array.isArray(categoryResultsArray) && categoryResultsArray.length > 0) {
+                                    // Results are sorted by total descending, so first is winner
+                                    const winner = categoryResultsArray[0];
+                                    if (winner && winner.player && winner.result) {
+                                        winnerInfo = `<div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e0e0e0;">
+                                            <div style="font-size: 0.85rem; color: #8b6914;">
+                                                <strong>Vítěz:</strong> ${winner.player.name} (${winner.result.total} bodů)
+                                            </div>
+                                        </div>`;
+                                    }
+                                }
+                            }
+                            
+                            html += `<div style="padding: 0.5rem; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                                <div>
+                                    <span style="color: #666; font-size: 0.9rem;">${CATEGORY_LABELS[category]}:</span>
+                                    <strong style="color: #8b6914; margin-left: 0.5rem;">${count}</strong>
+                                </div>
+                                ${winnerInfo}
+                            </div>`;
+                        }
+                    });
+                    
+                    html += `</div></div>`;
+                }
+            });
+            
+            html += `</div>`;
+            
+            contentDiv.innerHTML = html;
+        }
+
+        // Load manage page
+        function loadManagePage() {
+            loadPlayersCompetitionsSelect();
+            loadPlayersList();
+            loadCompetitionsList();
+            loadManageCompetitionsSelect();
+        }
+
+        // Load competitions select for players management
+        function loadPlayersCompetitionsSelect() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'podzimni' ? -1 : (b.type === 'podzimni' ? 1 : -1);
+            });
+            
+            const select = document.getElementById('players-competition-select');
+            select.innerHTML = '<option value="">-- Všechny soutěže --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                select.appendChild(option);
+            });
+        }
+
+        // Load players list for management
+        function loadPlayersList() {
+            const allPlayers = storage.players.getAll();
+            const results = storage.results.getAll();
+            const selectedCompetitionId = document.getElementById('players-competition-select').value;
+            const selectedCategory = document.getElementById('players-category-select').value;
+            const listDiv = document.getElementById('players-list');
+            
+            // Filter players based on selected competition
+            let players;
+            if (selectedCompetitionId) {
+                // Show only players who have results in the selected competition
+                const playerIdsInCompetition = new Set(
+                    results
+                        .filter(r => r.competitionId === selectedCompetitionId)
+                        .map(r => r.playerId)
+                );
+                players = allPlayers.filter(p => playerIdsInCompetition.has(p.id));
+            } else {
+                // Show all players
+                players = allPlayers;
+            }
+            
+            // Filter players by category if category is selected
+            if (selectedCategory) {
+                players = players.filter(p => p.category === selectedCategory);
+            }
+            
+            // Sort players by surname (last name)
+            players.sort((a, b) => {
+                const surnameA = getSurname(a.name);
+                const surnameB = getSurname(b.name);
+                return surnameA.localeCompare(surnameB, 'cs');
+            });
+            
+            if (players.length === 0) {
+                if (selectedCompetitionId && selectedCategory) {
+                    listDiv.innerHTML = `<p style="color: #999;">V této soutěži nejsou žádní hráči s výsledky v kategorii ${CATEGORY_LABELS[selectedCategory]}.</p>`;
+                } else if (selectedCompetitionId) {
+                    listDiv.innerHTML = '<p style="color: #999;">V této soutěži nejsou žádní hráči s výsledky.</p>';
+                } else if (selectedCategory) {
+                    listDiv.innerHTML = `<p style="color: #999;">V kategorii ${CATEGORY_LABELS[selectedCategory]} nejsou žádní hráči registrováni.</p>`;
+                } else {
+                    listDiv.innerHTML = '<p style="color: #999;">Žádní hráči nejsou registrováni.</p>';
+                }
+                return;
+            }
+            
+            let html = '<table class="table"><thead><tr><th>#</th><th>Jméno</th><th>Kategorie</th><th>Počet výsledků</th><th>Akce</th></tr></thead><tbody>';
+            
+            players.forEach((player, index) => {
+                const allPlayerResults = results.filter(r => r.playerId === player.id);
+                const competitionResults = selectedCompetitionId 
+                    ? allPlayerResults.filter(r => r.competitionId === selectedCompetitionId)
+                    : [];
+                const hasResultInSelectedCompetition = selectedCompetitionId && competitionResults.length > 0;
+                
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${player.name}</strong></td>
+                    <td>${CATEGORY_LABELS[player.category]}</td>
+                    <td>${selectedCompetitionId ? (hasResultInSelectedCompetition ? '1 v této soutěži' : '0 v této soutěži') : allPlayerResults.length + ' celkem'}</td>
+                    <td>
+                        <div style="display: flex; flex-direction: row; gap: 0.5rem; align-items: flex-start;">
+                            <button class="btn btn-secondary" onclick="deletePlayer('${player.id}', '${player.name.replace(/'/g, "\\'")}')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                Smazat hráče úplně
+                            </button>
+                            ${player.category === 'chlapci-do-15' || player.category === 'divky-do-15' ? `
+                                <button class="btn btn-warning" onclick="changePlayerCategory('${player.id}', '${player.name.replace(/'/g, "\\'")}', '${player.category}')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                    Změnit kategorii
+                                </button>
+                            ` : ''}
+                            ${selectedCompetitionId ? `
+                                <button class="btn btn-primary" onclick="deletePlayerFromCompetition('${player.id}', '${selectedCompetitionId}', '${player.name.replace(/'/g, "\\'")}')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                    Smazat hráče ze soutěže
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+        }
+
+        // Change player category
+        function changePlayerCategory(playerId, playerName, currentCategory) {
+            const player = storage.players.getById(playerId);
+            if (!player) {
+                alert('Hráč nenalezen');
+                return;
+            }
+            
+            // Determine available categories based on current category
+            // Only allow transition from lower to higher category (chlapci → muži, dívky → ženy)
+            let availableCategories = [];
+            let message = '';
+            
+            if (currentCategory === 'chlapci-do-15') {
+                availableCategories = [
+                    { value: 'muzi-od-16', label: 'Muži od 16 let' }
+                ];
+                message = `Hráč "${playerName}" je v kategorii "Chlapci do 15 let".\n\nChcete ho převést do kategorie "Muži od 16 let"?\n\n(Historie výsledků zůstane zachována)`;
+            } else if (currentCategory === 'divky-do-15') {
+                availableCategories = [
+                    { value: 'zeny-od-16', label: 'Ženy od 16 let' }
+                ];
+                message = `Hráč "${playerName}" je v kategorii "Dívky do 15 let".\n\nChcete ho převést do kategorie "Ženy od 16 let"?\n\n(Historie výsledků zůstane zachována)`;
+            } else if (currentCategory === 'muzi-od-16' || currentCategory === 'zeny-od-16') {
+                // Cannot transfer from higher category to lower category
+                alert(`Hráč "${playerName}" je již v kategorii "${CATEGORY_LABELS[currentCategory]}".\n\nPřevod zpět do nižší kategorie není možný.`);
+                return;
+            }
+            
+            if (availableCategories.length === 0) {
+                alert('Pro tuto kategorii není k dispozici přechod do jiné kategorie.');
+                return;
+            }
+            
+            // For now, we'll show a simple confirm dialog
+            // In the future, this could be a modal with dropdown
+            const newCategory = availableCategories[0];
+            const confirmed = confirm(message);
+            
+            if (confirmed) {
+                player.category = newCategory.value;
+                storage.players.update(player);
+                alert(`Hráč "${playerName}" byl úspěšně převeden do kategorie "${newCategory.label}".`);
+                loadPlayersList();
+                loadHomeStats();
+                
+                // Always reload players list in "Zadat výsledky" section if it exists
+                // This ensures the list is updated even if user navigates to it later
+                const resultCategorySelect = document.getElementById('result-category');
+                if (resultCategorySelect) {
+                    // Always reload the list to show updated player categories
+                    // If no category is selected, it will show all players including the transferred one
+                    loadPlayersByCategory();
+                }
+            }
+        }
+
+        // Delete player from specific competition
+        function deletePlayerFromCompetition(playerId, competitionId, playerName) {
+            const competition = storage.competitions.getById(competitionId);
+            const competitionName = competition ? formatCompetitionLabel(competition) : 'soutěže';
+            
+            if (!confirm(`Opravdu chcete smazat hráče "${playerName}" ze soutěže "${competitionName}"?\n\nTato akce smaže pouze výsledky hráče z této soutěže. Hráč zůstane v systému a může se účastnit jiných soutěží. Tato akce je nevratná!`)) {
+                return;
+            }
+            
+            const results = storage.results.getAll();
+            const playerResults = results.filter(r => r.playerId === playerId && r.competitionId === competitionId);
+            
+            if (playerResults.length === 0) {
+                alert(`Hráč "${playerName}" nemá žádné výsledky v soutěži "${competitionName}".`);
+                return;
+            }
+            
+            playerResults.forEach(result => {
+                storage.results.delete(result.id);
+            });
+            
+            alert(`Hráč "${playerName}" byl smazán ze soutěže "${competitionName}" (${playerResults.length} výsledek/ů).`);
+            loadPlayersList();
+            loadManageResults();
+            loadHomeStats();
+        }
+
+        // Delete player
+        function deletePlayer(playerId, playerName) {
+            const selectedCompetitionId = document.getElementById('players-competition-select').value;
+            
+            if (selectedCompetitionId) {
+                // Pokud je vybraná soutěž, smaže hráče úplně
+                if (!confirm(`Opravdu chcete smazat hráče "${playerName}" úplně ze systému?\n\nTato akce smaže hráče a všechny jeho výsledky ze všech soutěží. Tato akce je nevratná!`)) {
+                    return;
+                }
+            } else {
+                // Pokud není vybraná soutěž, smaže hráče úplně
+                if (!confirm(`Opravdu chcete smazat hráče "${playerName}" úplně ze systému?\n\nTato akce smaže hráče a všechny jeho výsledky ze všech soutěží. Tato akce je nevratná!`)) {
+                    return;
+                }
+            }
+            
+            const playerResults = storage.results.getByPlayerId(playerId);
+            storage.players.delete(playerId);
+            
+            alert(`Hráč "${playerName}" a ${playerResults.length} jeho výsledků byly smazány ze systému.`);
+            loadPlayersList();
+            loadHomeStats();
+        }
+
+        // Load competitions select for manage page
+        function loadManageCompetitionsSelect() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'jarni' ? -1 : 1;
+            });
+            
+            const select = document.getElementById('manage-competition-select');
+            select.innerHTML = '<option value="">-- Vyberte soutěž --</option>';
+            competitions.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp.id;
+                option.textContent = formatCompetitionLabel(comp);
+                select.appendChild(option);
+            });
+        }
+
+        // Load competitions list for management
+        function loadCompetitionsList() {
+            const competitions = storage.competitions.getAll().sort((a, b) => {
+                if (a.year !== b.year) return b.year - a.year;
+                return a.type === 'podzimni' ? -1 : (b.type === 'podzimni' ? 1 : -1);
+            });
+            const results = storage.results.getAll();
+            const listDiv = document.getElementById('competitions-list');
+            
+            if (competitions.length === 0) {
+                listDiv.innerHTML = '<p style="color: #999;">Žádné soutěže nejsou vytvořeny.</p>';
+                return;
+            }
+            
+            let html = '<table class="table"><thead><tr><th>Soutěž</th><th>Počet výsledků</th><th>Akce</th></tr></thead><tbody>';
+            
+            competitions.forEach(competition => {
+                const competitionResults = results.filter(r => r.competitionId === competition.id);
+                html += `<tr>
+                    <td><strong>${formatCompetitionLabel(competition)}</strong></td>
+                    <td>${competitionResults.length}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editCompetitionDate('${competition.id}', '${competition.date || ''}')" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-right: 0.5rem;">
+                            Upravit datum
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteCompetition('${competition.id}', '${formatCompetitionLabel(competition).replace(/'/g, "\\'")}')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            Smazat soutěž
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+        }
+
+        // Convert date from dd.mm.rrrr to YYYY-MM-DD
+        function parseCzechDate(dateStr) {
+            const parts = dateStr.split('.');
+            if (parts.length !== 3) return null;
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+            return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        // Convert date from YYYY-MM-DD to dd.mm.rrrr
+        function formatCzechDate(dateStr) {
+            if (!dateStr) return '';
+            let date = dateStr;
+            if (date.includes('T')) {
+                date = date.split('T')[0];
+            }
+            const parts = date.split('-');
+            if (parts.length !== 3) return dateStr;
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+
+        // Edit competition date
+        function editCompetitionDate(competitionId, currentDate) {
+            const competition = storage.competitions.getById(competitionId);
+            if (!competition) {
+                alert('Soutěž nenalezena');
+                return;
+            }
+            
+            // Format current date for input (dd.mm.rrrr)
+            const defaultDate = formatCzechDate(currentDate || '');
+            
+            const newDate = prompt(`Upravit datum konání soutěže:\n${formatCompetitionLabel(competition)}\n\nZadejte nové datum (formát: dd.mm.rrrr, např. 15.05.2025):`, defaultDate);
+            if (newDate === null || newDate.trim() === '') return; // User cancelled
+            
+            // Validate date format (dd.mm.rrrr)
+            const dateRegex = /^\d{1,2}\.\d{1,2}\.\d{4}$/;
+            if (!dateRegex.test(newDate.trim())) {
+                alert('Neplatný formát data. Použijte formát dd.mm.rrrr (např. 15.05.2025)');
+                return;
+            }
+            
+            // Convert to YYYY-MM-DD for storage
+            const dateForStorage = parseCzechDate(newDate.trim());
+            if (!dateForStorage) {
+                alert('Neplatné datum');
+                return;
+            }
+            
+            // Validate date is valid
+            const dateObj = new Date(dateForStorage + 'T00:00:00');
+            if (isNaN(dateObj.getTime())) {
+                alert('Neplatné datum');
+                return;
+            }
+            
+            // Update competition date
+            competition.date = dateForStorage;
+            const competitions = storage.competitions.getAll();
+            const index = competitions.findIndex(c => c.id === competitionId);
+            if (index !== -1) {
+                competitions[index] = competition;
+                storage.competitions.save(competitions);
+            }
+            
+            alert(`Datum soutěže bylo upraveno na ${newDate.trim()}.`);
+            loadCompetitionsList();
+            loadManageCompetitionsSelect();
+            loadCompetitionsSelect();
+        }
+
+        // Delete competition with all results
+        function deleteCompetition(competitionId, competitionName) {
+            if (!confirm(`Opravdu chcete smazat soutěž "${competitionName}" a všechny její výsledky? Tato akce je nevratná!`)) {
+                return;
+            }
+            
+            const competitionResults = storage.results.getByCompetitionId(competitionId);
+            // Delete all results for this competition
+            storage.results.deleteByCompetitionId(competitionId);
+            // Delete competition
+            const competitions = storage.competitions.getAll();
+            const filtered = competitions.filter(c => c.id !== competitionId);
+            storage.competitions.save(filtered);
+            
+            alert(`Soutěž "${competitionName}" a ${competitionResults.length} výsledků byly smazány.`);
+            loadCompetitionsList();
+            loadManageCompetitionsSelect();
+            loadHomeStats();
+        }
+
+        // Load results for management
+        function loadManageResults() {
+            const competitionId = document.getElementById('manage-competition-select').value;
+            const selectedCategory = document.getElementById('manage-category-select').value;
+            const listDiv = document.getElementById('manage-results-list');
+            
+            if (!competitionId) {
+                listDiv.innerHTML = '';
+                return;
+            }
+            
+            const competition = storage.competitions.getById(competitionId);
+            let results = storage.results.getByCompetitionId(competitionId);
+            const players = storage.players.getAll();
+            
+            if (!competition) {
+                listDiv.innerHTML = '<p style="color: #999;">Soutěž nenalezena</p>';
+                return;
+            }
+            
+            // Filter by category if selected
+            if (selectedCategory) {
+                const playerIdsInCategory = new Set(
+                    players
+                        .filter(p => p.category === selectedCategory)
+                        .map(p => p.id)
+                );
+                results = results.filter(r => playerIdsInCategory.has(r.playerId));
+            }
+            
+            if (results.length === 0) {
+                if (selectedCategory) {
+                    listDiv.innerHTML = `<p style="color: #999;">Tato soutěž nemá žádné výsledky v kategorii ${CATEGORY_LABELS[selectedCategory]}.</p>`;
+                } else {
+                    listDiv.innerHTML = '<p style="color: #999;">Tato soutěž nemá žádné výsledky.</p>';
+                }
+                return;
+            }
+            
+            // Sort results by player name
+            results.sort((a, b) => {
+                const playerA = players.find(p => p.id === a.playerId);
+                const playerB = players.find(p => p.id === b.playerId);
+                if (!playerA || !playerB) return 0;
+                return playerA.name.localeCompare(playerB.name);
+            });
+            
+            let html = `<h4 style="margin-bottom: 1rem; color: #555;">${formatCompetitionLabel(competition)}</h4>`;
+            html += '<table class="table"><thead><tr><th>#</th><th>Hráč</th><th>Kategorie</th><th>Kolo 1</th><th>Kolo 2</th><th>Rozstřel</th><th>Celkem</th><th>Akce</th></tr></thead><tbody>';
+            
+            results.forEach((result, index) => {
+                const player = players.find(p => p.id === result.playerId);
+                if (!player) return;
+                
+                const rozstrelValue = result.rozstrel !== null && result.rozstrel !== undefined ? result.rozstrel : '-';
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${player.name}</strong></td>
+                    <td>${CATEGORY_LABELS[player.category]}</td>
+                    <td>${result.round1 !== null && result.round1 !== undefined ? result.round1 : '-'}</td>
+                    <td>${result.round2 !== null && result.round2 !== undefined ? result.round2 : '-'}</td>
+                    <td>${rozstrelValue}</td>
+                    <td><strong>${result.total}</strong></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editResult('${result.id}', '${player.name.replace(/'/g, "\\'")}', ${result.round1 !== null && result.round1 !== undefined ? result.round1 : 'null'}, ${result.round2 !== null && result.round2 !== undefined ? result.round2 : 'null'}, ${result.rozstrel !== null && result.rozstrel !== undefined ? result.rozstrel : 'null'})" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                            Opravit
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+        }
+
+        // Delete result (kept for backward compatibility, but now we use deleteRound)
+        function deleteResult(resultId, playerName) {
+            if (!confirm(`Opravdu chcete smazat celý výsledek hráče "${playerName}"? Tato akce je nevratná!`)) {
+                return;
+            }
+            
+            storage.results.delete(resultId);
+            alert(`Výsledek hráče "${playerName}" byl smazán.`);
+            loadManageResults();
+            loadHomeStats();
+        }
+
+        // Edit result
+        function editResult(resultId, playerName, currentRound1, currentRound2, currentRozstrel) {
+            // Get competition ID from result
+            const results = storage.results.getAll();
+            const result = results.find(r => r.id === resultId);
+            if (!result) {
+                alert('Výsledek nenalezen');
+                return;
+            }
+            
+            // Check if competition is locked
+            if (isCompetitionLocked(result.competitionId)) {
+                alert('Tato soutěž je uzamčená. Výsledky nelze měnit.');
+                return;
+            }
+            
+            showEditResultModal(resultId, playerName, currentRound1, currentRound2, currentRozstrel || null, function() {
+                loadManageResults();
+            });
+        }
+
+        // Edit result from results view page
+        function editResultFromView(resultId, playerName, currentRound1, currentRound2, currentRozstrel) {
+            // Get competition ID from result
+            const results = storage.results.getAll();
+            const result = results.find(r => r.id === resultId);
+            if (!result) {
+                alert('Výsledek nenalezen');
+                return;
+            }
+            
+            // Check if competition is locked
+            if (isCompetitionLocked(result.competitionId)) {
+                alert('Tato soutěž je uzamčená. Výsledky nelze měnit.');
+                return;
+            }
+            
+            showEditResultModal(resultId, playerName, currentRound1, currentRound2, currentRozstrel || null, function() {
+                loadCompetitionResults();
+            });
+        }
+
+        // Delete round (kolo 1 or 2) - kept for backward compatibility
+        function deleteRound(resultId, roundNumber, playerName) {
+            const roundName = roundNumber === 1 ? 'kolo 1' : 'kolo 2';
+            if (!confirm(`Opravdu chcete smazat ${roundName} hráče "${playerName}"? Tato akce je nevratná!`)) {
+                return;
+            }
+            
+            const results = storage.results.getAll();
+            const result = results.find(r => r.id === resultId);
+            if (!result) {
+                alert('Výsledek nenalezen');
+                return;
+            }
+            
+            // Set the round to null (not entered)
+            if (roundNumber === 1) {
+                result.round1 = null;
+            } else {
+                result.round2 = null;
+            }
+            
+            // Recalculate total (treat null as 0)
+            result.total = (result.round1 || 0) + (result.round2 || 0);
+            
+            // Update the result
+            storage.results.update(result);
+            
+            alert(`${roundName === 'kolo 1' ? 'Kolo 1' : 'Kolo 2'} hráče "${playerName}" bylo smazáno.`);
+            
+            // Reload the view
+            if (window.currentCompetitionId) {
+                loadCompetitionResults();
+            } else {
+                loadManageResults();
+            }
+            loadHomeStats();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recalculate all existing results to ensure total does not include rozstrel
+            recalculateAllResults();
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('competition-date').value = today;
+            // Set default year to 2026 (nejbližší budoucí soutěž)
+            document.getElementById('competition-year').value = 2026;
+            
+            // Load competitions for player registration
+            loadRegisterPlayerCompetitions();
+            
+            // Load initial data
+            loadHomeStats();
+        });
+    </script>
+</body>
+</html>
+
