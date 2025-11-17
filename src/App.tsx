@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { RegisterPlayer } from './pages/RegisterPlayer';
 import { AddCompetition } from './pages/AddCompetition';
@@ -10,7 +10,7 @@ import './App.css';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="app">
         <header className="app-header">
           <div className="container">
@@ -44,7 +44,7 @@ function App() {
           </div>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
