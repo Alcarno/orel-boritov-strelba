@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Player, COMPETITION_TYPE_LABELS } from '../types';
+import { COMPETITION_TYPE_LABELS } from '../types';
 import { storage } from '../utils/storage';
 import { getPlayerHistory } from '../utils/results';
 
@@ -51,7 +51,7 @@ export function PlayerHistory() {
                 </tr>
               </thead>
               <tbody>
-                {history.map((item, index) => (
+                {history.map((item) => (
                   <tr key={item.result.id}>
                     <td>{COMPETITION_TYPE_LABELS[item.competition.type]}</td>
                     <td>{item.competition.year}</td>

@@ -1,6 +1,5 @@
 import { Category, Player, Result, Competition } from '../types';
 import { storage } from './storage';
-import { COMPETITION_TYPE_LABELS } from '../types';
 
 export interface CategoryMaxResult {
   category: Category;

@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Player, Competition, Result } from '../types';
+import { Competition, Result } from '../types';
 import { storage } from '../utils/storage';
 import { COMPETITION_TYPE_LABELS } from '../types';
 
 export function AddResults() {
-  const navigate = useNavigate();
   const [competitionId, setCompetitionId] = useState('');
   const [playerId, setPlayerId] = useState('');
   const [round1, setRound1] = useState('');

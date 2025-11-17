@@ -86,7 +86,7 @@ export function ViewResults() {
                     </tr>
                   </thead>
                   <tbody>
-                    {categoryResults.map((item, index) => {
+                    {categoryResults.map((item) => {
                       const badgeClass = 
                         item.position === 1 ? 'badge-gold' :
                         item.position === 2 ? 'badge-silver' :
