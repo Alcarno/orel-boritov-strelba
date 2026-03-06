@@ -55,9 +55,8 @@ function App() {
         <header className="app-header">
           <div className="container">
             <div className="header-content">
-              {/* Logo: Přidejte logo do složky public/logo.png a odkomentujte následující řádek */}
-              {/* <img src="/logo.png" alt="Orel Bořitov" className="logo" /> */}
-              <h1>Orel Bořitov - Střelba ze vzduchovek - ZMĚNA JE TADY</h1>
+              <img src="./logo.png" alt="Orel Bořitov" className="logo" />
+              <h1>Orel Bořitov - Střelba ze vzduchovek</h1>
             </div>
             <nav className="main-nav">
               <Link to="/">Domů</Link>
