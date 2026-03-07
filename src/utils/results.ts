@@ -1,6 +1,38 @@
 import { Player, Competition, Result, Category, CategoryResult, CompetitionResults } from '../types';
 import { storage } from './storage';
 
+function getSurname(name: string): string {
+  const parts = name.split(',')[0].trim().split(/\s+/);
+  return parts[parts.length - 1].toLowerCase();
+}
+
+function sortAndAssignPositions(resultsList: CategoryResult[]): void {
+  resultsList.sort((a, b) => {
+    if (b.result.total !== a.result.total) return b.result.total - a.result.total;
+    const rozA = a.result.rozstrel ?? 0;
+    const rozB = b.result.rozstrel ?? 0;
+    if (rozB !== rozA) return rozB - rozA;
+    return getSurname(a.player.name).localeCompare(getSurname(b.player.name), 'cs');
+  });
+
+  for (let i = 0; i < resultsList.length; i++) {
+    if (i === 0) {
+      resultsList[i].position = 1;
+      continue;
+    }
+    const prev = resultsList[i - 1];
+    const curr = resultsList[i];
+    const sameTotal = curr.result.total === prev.result.total;
+    const sameRozstrel = (curr.result.rozstrel ?? 0) === (prev.result.rozstrel ?? 0);
+
+    if (sameTotal && sameRozstrel && prev.position > 3) {
+      curr.position = prev.position;
+    } else {
+      curr.position = i + 1;
+    }
+  }
+}
+
 export function calculateResults(competitionId: string): CompetitionResults {
   const competition = storage.competitions.getById(competitionId);
   if (!competition) {
@@ -17,29 +49,22 @@ export function calculateResults(competitionId: string): CompetitionResults {
     'zeny-od-16': [],
   };
 
-  // Group results by category
   results.forEach(result => {
     const player = players.find(p => p.id === result.playerId);
     if (!player) return;
 
-    const categoryResultsList = categoryResults[player.category];
-    categoryResultsList.push({
+    const category = result.categoryAtTime || player.category;
+    categoryResults[category].push({
       player,
       result,
-      position: 0, // Will be set after sorting
+      position: 0,
     });
   });
 
-  // Sort and assign positions for each category
   Object.keys(categoryResults).forEach(category => {
-    const resultsList = categoryResults[category as Category];
-    resultsList.sort((a, b) => b.result.total - a.result.total);
-    resultsList.forEach((item, index) => {
-      item.position = index + 1;
-    });
+    sortAndAssignPositions(categoryResults[category as Category]);
   });
 
-  // Find absolute winner
   let absoluteWinner: { player: Player; result: Result } | null = null;
   let maxTotal = -1;
 
@@ -60,18 +85,28 @@ export function calculateResults(competitionId: string): CompetitionResults {
   };
 }
 
-export function getPlayerHistory(playerId: string): Array<{ competition: Competition; result: Result }> {
+export function getPlayerHistory(playerId: string): Array<{ competition: Competition; result: Result; position: number }> {
   const results = storage.results.getByPlayerId(playerId);
   const competitions = storage.competitions.getAll();
 
   return results
     .map(result => {
       const competition = competitions.find(c => c.id === result.competitionId);
-      return competition ? { competition, result } : null;
+      if (!competition) return null;
+
+      let position = 0;
+      try {
+        const compResults = calculateResults(competition.id);
+        for (const catResults of Object.values(compResults.categoryResults)) {
+          const found = catResults.find(cr => cr.player.id === playerId);
+          if (found) { position = found.position; break; }
+        }
+      } catch { /* ignore */ }
+
+      return { competition, result, position };
     })
-    .filter((item): item is { competition: Competition; result: Result } => item !== null)
+    .filter((item): item is { competition: Competition; result: Result; position: number } => item !== null)
     .sort((a, b) => {
-      // Sort by year and type (jarni before podzimni)
       if (a.competition.year !== b.competition.year) {
         return b.competition.year - a.competition.year;
       }

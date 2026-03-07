@@ -21,10 +21,10 @@ body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6b422 0%, #c99a2e 100%);
   color: white;
   padding: 1.5rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 
 .app-header .container {
@@ -42,7 +42,7 @@ body {
 }
 
 .logo {
-  height: 60px;
+  height: 90px;
   width: auto;
   object-fit: contain;
 }
@@ -65,12 +65,15 @@ body {
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .main-nav a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
 }
 
 .app-main {
@@ -94,7 +97,7 @@ body {
 
 .card h2 {
   margin-bottom: 1.5rem;
-  color: #667eea;
+  color: #8b6914;
   font-size: 1.5rem;
 }
 
@@ -122,7 +125,7 @@ body {
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #d4a017;
 }
 
 .btn {
@@ -136,13 +139,13 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6b422 0%, #c99a2e 100%);
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(230, 180, 34, 0.4);
 }
 
 .btn-secondary {
@@ -226,7 +229,7 @@ body {
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e6b422 0%, #c99a2e 100%);
   color: white;
   padding: 1.5rem;
   border-radius: 10px;

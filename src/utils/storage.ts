@@ -31,6 +31,8 @@ function competitionFromDb(row: Record<string, unknown>): Competition {
     type: row.type as Competition['type'],
     year: row.year as number,
     date: row.date as string,
+    locked: (row.locked as boolean) ?? false,
+    password: (row.password as string) ?? null,
   };
 }
 
@@ -40,6 +42,8 @@ function competitionToDb(comp: Competition) {
     type: comp.type,
     year: comp.year,
     date: comp.date,
+    locked: comp.locked,
+    password: comp.password,
   };
 }
 
@@ -48,9 +52,11 @@ function resultFromDb(row: Record<string, unknown>): Result {
     id: row.id as string,
     playerId: row.player_id as string,
     competitionId: row.competition_id as string,
-    round1: row.round1 as number,
-    round2: row.round2 as number,
+    round1: row.round1 as number | null,
+    round2: row.round2 as number | null,
+    rozstrel: (row.rozstrel as number | null) ?? null,
     total: row.total as number,
+    categoryAtTime: (row.category_at_time as Result['categoryAtTime']) ?? 'chlapci-do-15',
     createdAt: row.created_at as string,
   };
 }
@@ -62,7 +68,9 @@ function resultToDb(result: Result) {
     competition_id: result.competitionId,
     round1: result.round1,
     round2: result.round2,
+    rozstrel: result.rozstrel,
     total: result.total,
+    category_at_time: result.categoryAtTime,
     created_at: result.createdAt,
   };
 }
@@ -107,6 +115,12 @@ export const storage = {
     getById: (id: string): Player | undefined => {
       return playersCache.find(p => p.id === id);
     },
+    delete: (id: string): void => {
+      playersCache = playersCache.filter(p => p.id !== id);
+      supabase.from('players').delete().eq('id', id).then(({ error }) => {
+        if (error) console.error('Supabase delete player error:', error);
+      });
+    },
   },
 
   competitions: {
@@ -122,6 +136,21 @@ export const storage = {
     },
     getById: (id: string): Competition | undefined => {
       return competitionsCache.find(c => c.id === id);
+    },
+    update: (competition: Competition): void => {
+      const index = competitionsCache.findIndex(c => c.id === competition.id);
+      if (index !== -1) {
+        competitionsCache[index] = competition;
+        supabase.from('competitions').update(competitionToDb(competition)).eq('id', competition.id).then(({ error }) => {
+          if (error) console.error('Supabase update competition error:', error);
+        });
+      }
+    },
+    delete: (id: string): void => {
+      competitionsCache = competitionsCache.filter(c => c.id !== id);
+      supabase.from('competitions').delete().eq('id', id).then(({ error }) => {
+        if (error) console.error('Supabase delete competition error:', error);
+      });
     },
   },
 
@@ -150,6 +179,24 @@ export const storage = {
           if (error) console.error('Supabase update result error:', error);
         });
       }
+    },
+    delete: (id: string): void => {
+      resultsCache = resultsCache.filter(r => r.id !== id);
+      supabase.from('results').delete().eq('id', id).then(({ error }) => {
+        if (error) console.error('Supabase delete result error:', error);
+      });
+    },
+    deleteByPlayerId: (playerId: string): void => {
+      resultsCache = resultsCache.filter(r => r.playerId !== playerId);
+      supabase.from('results').delete().eq('player_id', playerId).then(({ error }) => {
+        if (error) console.error('Supabase delete results by player error:', error);
+      });
+    },
+    deleteByCompetitionId: (competitionId: string): void => {
+      resultsCache = resultsCache.filter(r => r.competitionId !== competitionId);
+      supabase.from('results').delete().eq('competition_id', competitionId).then(({ error }) => {
+        if (error) console.error('Supabase delete results by competition error:', error);
+      });
     },
   },
 };

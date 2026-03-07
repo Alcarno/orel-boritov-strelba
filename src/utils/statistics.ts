@@ -9,6 +9,12 @@ export interface CategoryMaxResult {
   result: Result;
 }
 
+export interface CompetitionPlayerCount {
+  competition: Competition;
+  playerCount: number;
+  perCategory: Partial<Record<Category, number>>;
+}
+
 export interface Statistics {
   categoryMaxResults: CategoryMaxResult[];
   overallMaxResult: {
@@ -20,6 +26,7 @@ export interface Statistics {
   totalPlayers: number;
   totalCompetitions: number;
   totalResults: number;
+  playersPerCompetition: CompetitionPlayerCount[];
 }
 
 export function calculateStatistics(): Statistics {
@@ -75,6 +82,22 @@ export function calculateStatistics(): Statistics {
     }
   });
 
+  const playersPerCompetition: CompetitionPlayerCount[] = competitions
+    .map(comp => {
+      const compResults = results.filter(r => r.competitionId === comp.id);
+      const uniquePlayerIds = new Set(compResults.map(r => r.playerId));
+      const perCategory: Partial<Record<Category, number>> = {};
+      compResults.forEach(r => {
+        const cat = r.categoryAtTime || players.find(p => p.id === r.playerId)?.category;
+        if (cat) perCategory[cat] = (perCategory[cat] || 0) + 1;
+      });
+      return { competition: comp, playerCount: uniquePlayerIds.size, perCategory };
+    })
+    .sort((a, b) => {
+      if (a.competition.year !== b.competition.year) return b.competition.year - a.competition.year;
+      return a.competition.type === 'jarni' ? -1 : 1;
+    });
+
   return {
     categoryMaxResults,
     overallMaxResult: overallMaxResult && overallMaxPlayer && overallMaxCompetition
@@ -88,6 +111,7 @@ export function calculateStatistics(): Statistics {
     totalPlayers: players.length,
     totalCompetitions: competitions.length,
     totalResults: results.length,
+    playersPerCompetition,
   };
 }
 

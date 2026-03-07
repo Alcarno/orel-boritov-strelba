@@ -37,6 +37,8 @@ export function AddCompetition() {
       type,
       year,
       date,
+      locked: false,
+      password: null,
     };
 
     storage.competitions.add(competition);

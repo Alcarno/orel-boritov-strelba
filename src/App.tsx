@@ -7,6 +7,7 @@ import { AddResults } from './pages/AddResults';
 import { ViewResults } from './pages/ViewResults';
 import { PlayerHistory } from './pages/PlayerHistory';
 import { Statistics } from './pages/Statistics';
+import { Management } from './pages/Management';
 import { initStorage } from './utils/storage';
 import './App.css';
 
@@ -66,6 +67,7 @@ function App() {
               <Link to="/results">Výsledky</Link>
               <Link to="/player-history">Historie hráče</Link>
               <Link to="/statistics">Statistiky</Link>
+              <Link to="/management">Správa</Link>
             </nav>
           </div>
         </header>
@@ -79,6 +81,7 @@ function App() {
               <Route path="/results" element={<ViewResults />} />
               <Route path="/player-history" element={<PlayerHistory />} />
               <Route path="/statistics" element={<Statistics />} />
+              <Route path="/management" element={<Management />} />
             </Routes>
           </div>
         </main>

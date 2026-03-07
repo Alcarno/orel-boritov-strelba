@@ -14,17 +14,26 @@ export interface Competition {
   type: CompetitionType;
   year: number;
   date: string;
+  locked: boolean;
+  password: string | null;
 }
 
 export interface Result {
   id: string;
   playerId: string;
   competitionId: string;
-  round1: number; // 0-50
-  round2: number; // 0-50
-  total: number; // round1 + round2
+  round1: number | null; // 0-50
+  round2: number | null; // 0-50
+  rozstrel: number | null; // 0-50, tiebreaker
+  total: number; // round1 + round2 (rozstrel se nepřičítá)
+  categoryAtTime: Category;
   createdAt: string;
 }
+
+export const ALLOWED_TRANSFERS: Partial<Record<Category, Category>> = {
+  'chlapci-do-15': 'muzi-od-16',
+  'divky-do-15': 'zeny-od-16',
+};
 
 export interface PlayerWithResults extends Player {
   results: Result[];

@@ -1,5 +1,5 @@
 import { calculateStatistics } from '../utils/statistics';
-import { CATEGORY_LABELS, COMPETITION_TYPE_LABELS } from '../types';
+import { CATEGORY_LABELS, COMPETITION_TYPE_LABELS, Category } from '../types';
 
 export function Statistics() {
   const stats = calculateStatistics();
@@ -23,10 +23,74 @@ export function Statistics() {
         </div>
       </div>
 
+      {stats.playersPerCompetition.length > 0 && (
+        <div style={{ marginTop: '2rem' }}>
+          <h3 style={{ marginBottom: '1rem', color: '#8b6914' }}>Počet hráčů podle soutěží</h3>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Soutěž</th>
+                <th>Rok</th>
+                {(Object.keys(CATEGORY_LABELS) as Category[]).map(cat => (
+                  <th key={cat} style={{ textAlign: 'center' }}>{CATEGORY_LABELS[cat]}</th>
+                ))}
+                <th style={{ textAlign: 'center' }}>Celkem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.playersPerCompetition.map(item => (
+                <tr key={item.competition.id}>
+                  <td>{COMPETITION_TYPE_LABELS[item.competition.type]}</td>
+                  <td>{item.competition.year}</td>
+                  {(Object.keys(CATEGORY_LABELS) as Category[]).map(cat => (
+                    <td key={cat} style={{ textAlign: 'center' }}>{item.perCategory[cat] || 0}</td>
+                  ))}
+                  <td style={{ textAlign: 'center' }}><strong>{item.playerCount}</strong></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div style={{ marginTop: '2rem' }}>
+        <h3 style={{ marginBottom: '1rem', color: '#8b6914' }}>Maximální výsledky podle kategorií</h3>
+
+        {stats.categoryMaxResults.length === 0 ? (
+          <p style={{ color: '#999' }}>Zatím nejsou k dispozici žádné statistiky.</p>
+        ) : (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {stats.categoryMaxResults.map(categoryStat => (
+              <div
+                key={categoryStat.category}
+                style={{
+                  padding: '1.5rem',
+                  background: '#f8f9fa',
+                  borderRadius: '10px',
+                  border: '2px solid #e0e0e0'
+                }}
+              >
+                <h4 style={{ marginBottom: '0.5rem', color: '#555' }}>
+                  {CATEGORY_LABELS[categoryStat.category]}
+                </h4>
+                <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                  <strong>{categoryStat.player.name}</strong> - {categoryStat.maxScore} bodů
+                </p>
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                  {COMPETITION_TYPE_LABELS[categoryStat.competition.type]} {categoryStat.competition.year}
+                  <br />
+                  Kolo 1: {categoryStat.result.round1 ?? '-'} | Kolo 2: {categoryStat.result.round2 ?? '-'}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {stats.overallMaxResult && (
-        <div style={{ 
-          marginTop: '2rem', 
-          padding: '1.5rem', 
+        <div style={{
+          marginTop: '2rem',
+          padding: '1.5rem',
           background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)',
           borderRadius: '10px',
           border: '3px solid #ffd700'
@@ -45,43 +109,6 @@ export function Statistics() {
           </p>
         </div>
       )}
-
-      <div style={{ marginTop: '2rem' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#667eea' }}>Maximální výsledky podle kategorií</h3>
-        
-        {stats.categoryMaxResults.length === 0 ? (
-          <p style={{ color: '#999' }}>Zatím nejsou k dispozici žádné statistiky.</p>
-        ) : (
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {stats.categoryMaxResults.map(categoryStat => (
-              <div 
-                key={categoryStat.category}
-                style={{
-                  padding: '1.5rem',
-                  background: '#f8f9fa',
-                  borderRadius: '10px',
-                  border: '2px solid #e0e0e0'
-                }}
-              >
-                <h4 style={{ marginBottom: '0.5rem', color: '#555' }}>
-                  {CATEGORY_LABELS[categoryStat.category]}
-                </h4>
-                <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                  <strong>{categoryStat.player.name}</strong> - {categoryStat.maxScore} bodů
-                </p>
-                <p style={{ color: '#666', fontSize: '0.9rem' }}>
-                  {COMPETITION_TYPE_LABELS[categoryStat.competition.type]} {categoryStat.competition.year}
-                  <br />
-                  Kolo 1: {categoryStat.result.round1} | Kolo 2: {categoryStat.result.round2}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
-
-
-

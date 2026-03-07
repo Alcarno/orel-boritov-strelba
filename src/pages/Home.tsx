@@ -29,7 +29,7 @@ export function Home() {
       </div>
 
       <div style={{ marginTop: '2rem' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#667eea' }}>Rychlé akce</h3>
+        <h3 style={{ marginBottom: '1rem', color: '#8b6914' }}>Rychlé akce</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
           <Link to="/register-player" className="btn btn-primary">
             Registrovat nového hráče
