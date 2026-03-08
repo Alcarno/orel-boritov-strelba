@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Player, Competition, CATEGORY_LABELS, COMPETITION_TYPE_LABELS, ALLOWED_TRANSFERS } from '../types';
+import { Competition, CATEGORY_LABELS, COMPETITION_TYPE_LABELS, ALLOWED_TRANSFERS } from '../types';
 import { storage } from '../utils/storage';
 
 export function Management() {
