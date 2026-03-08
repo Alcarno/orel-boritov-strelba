@@ -34,27 +34,43 @@ export function AddResults() {
     if (!competitionId || !playerId) return false;
     try {
       const results = calculateResults(competitionId);
-      for (const catResults of Object.values(results.categoryResults)) {
-        const playerResult = catResults.find(cr => cr.player.id === playerId);
-        if (!playerResult) continue;
-        if (catResults.length < 2) return false;
+      const player = storage.players.getById(playerId);
+      if (!player) return false;
 
-        const sorted = [...catResults].sort((a, b) => b.result.total - a.result.total);
-        const pos1 = sorted[0];
-        const pos2 = sorted[1];
-        const pos3 = sorted.length > 2 ? sorted[2] : null;
+      const category = player.category;
+      let catResults = results.categoryResults[category];
+      if (!catResults) return false;
 
-        const isInvolved = (cr: typeof pos1) => cr.player.id === playerId;
+      const projectedTotal = (round1 !== '' ? parseInt(round1) : 0) + (round2 !== '' ? parseInt(round2) : 0);
+      const hasFormInput = round1 !== '' || round2 !== '';
 
-        if (pos1 && pos2 && pos1.result.total === pos2.result.total) {
-          if (isInvolved(pos1) || isInvolved(pos2)) return true;
-        }
-        if (pos2 && pos3 && pos2.result.total === pos3.result.total) {
-          if (isInvolved(pos2) || isInvolved(pos3)) return true;
-        }
+      const existingEntry = catResults.find(cr => cr.player.id === playerId);
+      let entries = catResults.map(cr => ({
+        playerId: cr.player.id,
+        total: cr.player.id === playerId && hasFormInput ? projectedTotal : cr.result.total,
+      }));
 
-        return false;
+      if (!existingEntry && hasFormInput) {
+        entries.push({ playerId, total: projectedTotal });
       }
+
+      if (entries.length < 2) return false;
+
+      entries.sort((a, b) => b.total - a.total);
+      const pos1 = entries[0];
+      const pos2 = entries[1];
+      const pos3 = entries.length > 2 ? entries[2] : null;
+
+      const isInvolved = (e: typeof pos1) => e.playerId === playerId;
+
+      if (pos1 && pos2 && pos1.total === pos2.total) {
+        if (isInvolved(pos1) || isInvolved(pos2)) return true;
+      }
+      if (pos2 && pos3 && pos2.total === pos3.total) {
+        if (isInvolved(pos2) || isInvolved(pos3)) return true;
+      }
+
+      return false;
     } catch {
       // ignore
     }
