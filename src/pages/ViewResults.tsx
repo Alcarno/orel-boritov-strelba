@@ -131,7 +131,7 @@ export function ViewResults() {
             {getCompetitionLabel(results.competition)}
           </h3>
 
-          {results.absoluteWinner && (
+          {results.absoluteWinners.length > 0 && (
             <div style={{
               marginBottom: '2rem',
               padding: '1.5rem',
@@ -139,12 +139,19 @@ export function ViewResults() {
               color: 'white',
               borderRadius: '10px'
             }}>
-              <h4 style={{ marginBottom: '0.5rem' }}>🏆 Absolutní vítěz</h4>
-              <p style={{ fontSize: '1.2rem' }}>
-                <strong>{results.absoluteWinner.player.name}</strong> - {results.absoluteWinner.result.total} bodů
-                <br />
-                <small>({CATEGORY_LABELS[results.absoluteWinner.result.categoryAtTime || results.absoluteWinner.player.category]})</small>
-              </p>
+              <h4 style={{ marginBottom: '0.5rem' }}>
+                🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (shoda)' : 'Absolutní vítěz'}
+              </h4>
+              {results.absoluteWinners.map((winner, idx) => (
+                <p key={idx} style={{ fontSize: '1.2rem', marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
+                  <strong>{winner.player.name}</strong> - {winner.result.total} bodů
+                  {winner.result.rozstrel != null && (
+                    <span> (rozstřel: {winner.result.rozstrel})</span>
+                  )}
+                  <br />
+                  <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
+                </p>
+              ))}
             </div>
           )}
 

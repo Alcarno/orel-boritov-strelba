@@ -65,23 +65,33 @@ export function calculateResults(competitionId: string): CompetitionResults {
     sortAndAssignPositions(categoryResults[category as Category]);
   });
 
-  let absoluteWinner: { player: Player; result: Result } | null = null;
-  let maxTotal = -1;
-
-  results.forEach(result => {
-    if (result.total > maxTotal) {
-      maxTotal = result.total;
+  const allWithPlayers = results
+    .map(result => {
       const player = players.find(p => p.id === result.playerId);
-      if (player) {
-        absoluteWinner = { player, result };
-      }
-    }
+      return player ? { player, result } : null;
+    })
+    .filter((item): item is { player: Player; result: Result } => item !== null);
+
+  allWithPlayers.sort((a, b) => {
+    if (b.result.total !== a.result.total) return b.result.total - a.result.total;
+    const rozA = a.result.rozstrel ?? 0;
+    const rozB = b.result.rozstrel ?? 0;
+    return rozB - rozA;
   });
+
+  let absoluteWinners: { player: Player; result: Result }[] = [];
+  if (allWithPlayers.length > 0) {
+    const best = allWithPlayers[0];
+    absoluteWinners = allWithPlayers.filter(
+      item => item.result.total === best.result.total
+        && (item.result.rozstrel ?? 0) === (best.result.rozstrel ?? 0)
+    );
+  }
 
   return {
     competition,
     categoryResults,
-    absoluteWinner,
+    absoluteWinners,
   };
 }
 

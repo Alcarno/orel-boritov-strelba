@@ -50,10 +50,10 @@ export interface CompetitionResults {
   categoryResults: {
     [key in Category]: CategoryResult[];
   };
-  absoluteWinner: {
+  absoluteWinners: {
     player: Player;
     result: Result;
-  } | null;
+  }[];
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
