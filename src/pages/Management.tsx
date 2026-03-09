@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Competition, CATEGORY_LABELS, COMPETITION_TYPE_LABELS, ALLOWED_TRANSFERS } from '../types';
 import { storage } from '../utils/storage';
 
+const MASTER_PASSWORD = import.meta.env.VITE_MASTER_PASSWORD || '';
+
+function isValidPassword(input: string, competitionPassword: string | null): boolean {
+  if (MASTER_PASSWORD && input === MASTER_PASSWORD) return true;
+  return input === competitionPassword;
+}
+
 export function Management() {
   const [selectedPlayerId, setSelectedPlayerId] = useState('');
   const [deletePlayerId, setDeletePlayerId] = useState('');
@@ -117,7 +124,10 @@ export function Management() {
 
   const handleUnlock = () => {
     if (!selectedCompetition) return;
-    if (unlockPassword !== selectedCompetition.password) { showMessage('error', 'Nesprávné heslo'); return; }
+    if (!isValidPassword(unlockPassword, selectedCompetition.password)) {
+      showMessage('error', 'Nesprávné heslo');
+      return;
+    }
     storage.competitions.update({ ...selectedCompetition, locked: false, password: null });
     setUnlockPassword('');
     showMessage('success', `Soutěž "${getCompetitionLabel(selectedCompetition)}" byla odemčena`);
@@ -284,6 +294,9 @@ export function Management() {
                   <div className="form-group">
                     <label htmlFor="unlock-pw">Zadejte heslo pro odemčení</label>
                     <input type="password" id="unlock-pw" value={unlockPassword} onChange={(e) => setUnlockPassword(e.target.value)} placeholder="Zadejte heslo" style={{ maxWidth: '300px' }} />
+                    <small style={{ color: '#888', display: 'block', marginTop: '0.25rem' }}>
+                      Zapomněli jste heslo? Použijte hlavní (master) heslo.
+                    </small>
                   </div>
                   <button className="btn btn-secondary" onClick={handleUnlock}>🔓 Odemknout soutěž</button>
                 </div>

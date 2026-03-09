@@ -3,6 +3,8 @@ import { Category, Competition, Result, CATEGORY_LABELS, COMPETITION_TYPE_LABELS
 import { storage } from '../utils/storage';
 import { calculateResults } from '../utils/results';
 
+const MASTER_PASSWORD = import.meta.env.VITE_MASTER_PASSWORD || '';
+
 export function AddResults() {
   const [competitionId, setCompetitionId] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | ''>('');
@@ -91,7 +93,8 @@ export function AddResults() {
         setError('Soutěž je uzamčena. Zadejte heslo pro úpravu výsledků.');
         return;
       }
-      if (password !== selectedCompetition.password) {
+      const isValid = password === selectedCompetition.password || (MASTER_PASSWORD && password === MASTER_PASSWORD);
+      if (!isValid) {
         setError('Nesprávné heslo');
         return;
       }
@@ -307,6 +310,9 @@ export function AddResults() {
               placeholder="Zadejte heslo"
               required
             />
+            <small style={{ color: '#888', display: 'block', marginTop: '0.25rem' }}>
+              Zapomněli jste heslo? Použijte hlavní (master) heslo.
+            </small>
           </div>
         )}
 
