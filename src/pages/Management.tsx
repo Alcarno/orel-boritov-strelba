@@ -45,6 +45,18 @@ export function Management() {
     if (!deletePlayerId) return;
     const player = storage.players.getById(deletePlayerId);
     if (!player) return;
+
+    const playerResults = storage.results.getByPlayerId(deletePlayerId);
+    const lockedComps = playerResults
+      .map(r => storage.competitions.getById(r.competitionId))
+      .filter((c): c is Competition => c != null && c.locked);
+
+    if (lockedComps.length > 0) {
+      const names = lockedComps.map(c => getCompetitionLabel(c)).join(', ');
+      showMessage('error', `Nelze smazat hráče – má výsledky v uzamčených soutěžích: ${names}. Nejprve soutěže odemkněte.`);
+      return;
+    }
+
     if (!confirm(`Opravdu chcete smazat hráče "${player.name}" a všechny jeho výsledky?`)) return;
     storage.results.deleteByPlayerId(deletePlayerId);
     storage.players.delete(deletePlayerId);
@@ -58,6 +70,12 @@ export function Management() {
     const player = storage.players.getById(deleteResultPlayerId);
     const comp = storage.competitions.getById(deleteResultCompetitionId);
     if (!player || !comp) return;
+
+    if (comp.locked) {
+      showMessage('error', `Soutěž "${getCompetitionLabel(comp)}" je uzamčena. Nelze mazat výsledky – nejprve ji odemkněte.`);
+      return;
+    }
+
     const result = storage.results.getByCompetitionId(deleteResultCompetitionId)
       .find(r => r.playerId === deleteResultPlayerId);
     if (!result) {
