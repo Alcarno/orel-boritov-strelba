@@ -6,6 +6,9 @@ import { calculateResults } from '../utils/results';
 export function ViewResults() {
   const [selectedCompetitionId, setSelectedCompetitionId] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | ''>('');
+  const [tiebreakInputs, setTiebreakInputs] = useState<Record<string, string>>({});
+  const [tiebreakMessage, setTiebreakMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [, setRefresh] = useState(0);
   const printRef = useRef<HTMLDivElement>(null);
 
   const competitions = storage.competitions.getAll().sort((a, b) => {
@@ -152,6 +155,96 @@ export function ViewResults() {
                   <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
                 </p>
               ))}
+
+              {results.absoluteWinners.length > 1 && (
+                <div style={{
+                  marginTop: '1rem',
+                  padding: '1rem',
+                  background: 'rgba(255,255,255,0.15)',
+                  borderRadius: '8px',
+                }}>
+                  <p style={{ marginBottom: '0.75rem', fontWeight: 'bold' }}>
+                    ⚡ Shoda bodů – zadejte rozstřel pro určení absolutního vítěze:
+                  </p>
+                  {tiebreakMessage && (
+                    <div style={{
+                      marginBottom: '0.75rem',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '5px',
+                      background: tiebreakMessage.type === 'success' ? '#38a169' : '#e53e3e',
+                      color: 'white',
+                    }}>
+                      {tiebreakMessage.text}
+                    </div>
+                  )}
+                  {results.absoluteWinners.map((winner) => (
+                    <div key={winner.result.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                      <span style={{ minWidth: '150px' }}>{winner.player.name}:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="50"
+                        value={tiebreakInputs[winner.result.id] ?? (winner.result.rozstrel != null ? String(winner.result.rozstrel) : '')}
+                        onChange={(e) => setTiebreakInputs(prev => ({ ...prev, [winner.result.id]: e.target.value }))}
+                        placeholder="Rozstřel (0-50)"
+                        style={{
+                          width: '140px',
+                          padding: '0.4rem 0.6rem',
+                          borderRadius: '5px',
+                          border: '1px solid rgba(255,255,255,0.4)',
+                          background: 'rgba(255,255,255,0.2)',
+                          color: 'white',
+                          fontSize: '0.95rem',
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const winners = results!.absoluteWinners;
+                      let hasValue = false;
+                      for (const w of winners) {
+                        const val = tiebreakInputs[w.result.id];
+                        if (val != null && val !== '') {
+                          const num = parseInt(val);
+                          if (isNaN(num) || num < 0 || num > 50) {
+                            setTiebreakMessage({ type: 'error', text: `Neplatná hodnota pro ${w.player.name}. Zadejte číslo 0–50.` });
+                            return;
+                          }
+                          hasValue = true;
+                        }
+                      }
+                      if (!hasValue) {
+                        setTiebreakMessage({ type: 'error', text: 'Zadejte rozstřel alespoň jednomu hráči.' });
+                        return;
+                      }
+                      for (const w of winners) {
+                        const val = tiebreakInputs[w.result.id];
+                        if (val != null && val !== '') {
+                          const updated = { ...w.result, rozstrel: parseInt(val) };
+                          storage.results.update(updated);
+                        }
+                      }
+                      setTiebreakInputs({});
+                      setTiebreakMessage({ type: 'success', text: 'Rozstřel uložen – pořadí přepočítáno.' });
+                      setRefresh(n => n + 1);
+                      setTimeout(() => setTiebreakMessage(null), 3000);
+                    }}
+                    style={{
+                      marginTop: '0.5rem',
+                      padding: '0.5rem 1.25rem',
+                      borderRadius: '5px',
+                      border: 'none',
+                      background: 'white',
+                      color: '#8b6914',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Uložit rozstřel
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
