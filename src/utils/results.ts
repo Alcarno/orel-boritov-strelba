@@ -146,10 +146,9 @@ export function getPlayerHistory(playerId: string): Array<{ competition: Competi
     })
     .filter((item): item is { competition: Competition; result: Result; position: number } => item !== null)
     .sort((a, b) => {
-      if (a.competition.year !== b.competition.year) {
-        return b.competition.year - a.competition.year;
-      }
-      return a.competition.type === 'podzimni' ? -1 : 1;
+      const valA = a.competition.year * 2 + (a.competition.type === 'podzimni' ? 1 : 0);
+      const valB = b.competition.year * 2 + (b.competition.type === 'podzimni' ? 1 : 0);
+      return valB - valA;
     });
 }
 

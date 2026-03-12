@@ -29,8 +29,9 @@ export function Management() {
 
   const players = storage.players.getAll().sort((a, b) => a.name.localeCompare(b.name, 'cs'));
   const competitions = storage.competitions.getAll().sort((a, b) => {
-    if (a.year !== b.year) return b.year - a.year;
-    return a.type === 'podzimni' ? -1 : 1;
+    const valA = a.year * 2 + (a.type === 'podzimni' ? 1 : 0);
+    const valB = b.year * 2 + (b.type === 'podzimni' ? 1 : 0);
+    return valB - valA;
   });
 
   const selectedPlayer = selectedPlayerId ? players.find(p => p.id === selectedPlayerId) : null;
