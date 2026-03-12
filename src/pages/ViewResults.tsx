@@ -89,7 +89,7 @@ export function ViewResults() {
   };
 
   return (
-    <div className="card">
+    <div className="card" style={{ maxWidth: 'none' }}>
       <h2>Výsledky soutěží</h2>
 
       <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
@@ -251,58 +251,73 @@ export function ViewResults() {
             </div>
           )}
 
-          {Object.entries(results.categoryResults)
-            .filter(([category]) => !categoryFilter || category === categoryFilter)
-            .map(([category, categoryResults]) => (
-            <div key={category} style={{ marginBottom: '2rem', pageBreakInside: 'avoid' }}>
-              <h4 style={{ marginBottom: '1rem', color: '#555' }}>
-                {CATEGORY_LABELS[category as Category]}
-              </h4>
-              {categoryResults.length === 0 ? (
-                <p style={{ color: '#999' }}>Žádné výsledky v této kategorii</p>
-              ) : (
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Umístění</th>
-                      <th>Jméno</th>
-                      <th>Kolo 1</th>
-                      <th>Kolo 2</th>
-                      <th>Celkem</th>
-                      {hasAnyRozstrel && <th>Rozstřel</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categoryResults.map((item) => {
-                      const badgeClass =
-                        item.position === 1 ? 'badge-gold' :
-                        item.position === 2 ? 'badge-silver' :
-                        item.position === 3 ? 'badge-bronze' : '';
+          <div style={{
+            display: 'flex',
+            gap: '1.5rem',
+            overflowX: 'auto',
+            paddingBottom: '1rem',
+          }}>
+            {Object.entries(results.categoryResults)
+              .filter(([category]) => !categoryFilter || category === categoryFilter)
+              .map(([category, categoryResults]) => (
+              <div key={category} style={{
+                flex: '0 0 auto',
+                minWidth: '320px',
+                maxWidth: '400px',
+                background: '#fafafa',
+                borderRadius: '8px',
+                padding: '1rem',
+                border: '1px solid #e0e0e0',
+              }}>
+                <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1rem', textAlign: 'center' }}>
+                  {CATEGORY_LABELS[category as Category]}
+                </h4>
+                {categoryResults.length === 0 ? (
+                  <p style={{ color: '#999', textAlign: 'center', padding: '1rem 0' }}>Žádné výsledky</p>
+                ) : (
+                  <table className="table" style={{ fontSize: '0.9rem' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ padding: '0.5rem' }}>#</th>
+                        <th style={{ padding: '0.5rem' }}>Jméno</th>
+                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>K1</th>
+                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>K2</th>
+                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>∑</th>
+                        {hasAnyRozstrel && <th style={{ padding: '0.5rem', textAlign: 'center' }}>R</th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categoryResults.map((item) => {
+                        const badgeClass =
+                          item.position === 1 ? 'badge-gold' :
+                          item.position === 2 ? 'badge-silver' :
+                          item.position === 3 ? 'badge-bronze' : '';
 
-                      return (
-                        <tr key={item.player.id}>
-                          <td>
-                            {item.position === 1 && '🥇'}
-                            {item.position === 2 && '🥈'}
-                            {item.position === 3 && '🥉'}
-                            {item.position > 3 && formatPosition(item.position, categoryResults)}
-                            {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.5rem' }}>
-                              {item.position}.
-                            </span>}
-                          </td>
-                          <td><strong>{item.player.name}</strong></td>
-                          <td>{item.result.round1 ?? '-'}</td>
-                          <td>{item.result.round2 ?? '-'}</td>
-                          <td><strong>{item.result.total}</strong></td>
-                          {hasAnyRozstrel && <td>{item.result.rozstrel ?? '-'}</td>}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          ))}
+                        return (
+                          <tr key={item.player.id}>
+                            <td style={{ padding: '0.5rem', whiteSpace: 'nowrap' }}>
+                              {item.position === 1 && '🥇'}
+                              {item.position === 2 && '🥈'}
+                              {item.position === 3 && '🥉'}
+                              {item.position > 3 && formatPosition(item.position, categoryResults)}
+                              {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.25rem', padding: '0.15rem 0.5rem', fontSize: '0.8rem' }}>
+                                {item.position}.
+                              </span>}
+                            </td>
+                            <td style={{ padding: '0.5rem' }}><strong>{item.player.name}</strong></td>
+                            <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
+                            <td style={{ padding: '0.5rem', textAlign: 'center' }}><strong>{item.result.total}</strong></td>
+                            {hasAnyRozstrel && <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
