@@ -10,6 +10,7 @@ export function ViewResults() {
   const [tiebreakMessage, setTiebreakMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [, setRefresh] = useState(0);
   const printRef = useRef<HTMLDivElement>(null);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   const competitions = storage.competitions.getAll().sort((a, b) => {
     if (a.year !== b.year) return b.year - a.year;
@@ -35,12 +36,14 @@ export function ViewResults() {
     : false;
 
   const handleExportPdf = async () => {
-    if (!printRef.current || !results) return;
+    if (!pdfRef.current || !results) return;
     try {
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
 
-      const canvas = await html2canvas(printRef.current, { scale: 2 });
+      pdfRef.current.style.display = 'block';
+      const canvas = await html2canvas(pdfRef.current, { scale: 2 });
+      pdfRef.current.style.display = 'none';
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -321,6 +324,78 @@ export function ViewResults() {
 
       {selectedCompetitionId && !results && (
         <p style={{ color: '#999', marginTop: '1rem' }}>Načítání výsledků...</p>
+      )}
+
+      {results && (
+        <div ref={pdfRef} style={{ display: 'none', position: 'absolute', left: '-9999px', width: '800px', background: 'white', padding: '2rem', fontSize: '1.15rem' }}>
+          <h2 style={{ marginBottom: '0.5rem', color: '#8b6914', fontSize: '1.8rem' }}>
+            {getCompetitionLabel(results.competition)}
+          </h2>
+
+          {results.absoluteWinners.length > 0 && (
+            <div style={{
+              marginBottom: '1.5rem',
+              padding: '1.25rem',
+              background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
+              color: 'white',
+              borderRadius: '10px',
+            }}>
+              <h3 style={{ marginBottom: '0.5rem', fontSize: '1.4rem' }}>
+                🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (nerozhodnuto)' : 'Absolutní vítěz'}
+              </h3>
+              {results.absoluteWinners.map((winner, idx) => (
+                <p key={idx} style={{ fontSize: '1.3rem' }}>
+                  <strong>{winner.player.name}</strong> – {winner.result.total} bodů
+                  {winner.result.rozstrel != null && <span> (rozstřel: {winner.result.rozstrel})</span>}
+                  {' '}({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})
+                </p>
+              ))}
+            </div>
+          )}
+
+          {Object.entries(results.categoryResults)
+            .filter(([category]) => !categoryFilter || category === categoryFilter)
+            .map(([category, catResults]) => (
+            <div key={category} style={{ marginBottom: '1.5rem', pageBreakInside: 'avoid' }}>
+              <h3 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1.3rem', borderBottom: '2px solid #e6b422', paddingBottom: '0.25rem' }}>
+                {CATEGORY_LABELS[category as Category]}
+              </h3>
+              {catResults.length === 0 ? (
+                <p style={{ color: '#999' }}>Žádné výsledky v této kategorii</p>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1.15rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid #ccc' }}>
+                      <th style={{ padding: '0.6rem', textAlign: 'left' }}>Umístění</th>
+                      <th style={{ padding: '0.6rem', textAlign: 'left' }}>Jméno</th>
+                      <th style={{ padding: '0.6rem', textAlign: 'center' }}>Kolo 1</th>
+                      <th style={{ padding: '0.6rem', textAlign: 'center' }}>Kolo 2</th>
+                      <th style={{ padding: '0.6rem', textAlign: 'center' }}>Celkem</th>
+                      {hasAnyRozstrel && <th style={{ padding: '0.6rem', textAlign: 'center' }}>Rozstřel</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {catResults.map((item) => (
+                      <tr key={item.player.id} style={{ borderBottom: '1px solid #e0e0e0' }}>
+                        <td style={{ padding: '0.6rem' }}>
+                          {item.position === 1 && '🥇 '}
+                          {item.position === 2 && '🥈 '}
+                          {item.position === 3 && '🥉 '}
+                          {item.position}.
+                        </td>
+                        <td style={{ padding: '0.6rem' }}><strong>{item.player.name}</strong></td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}><strong>{item.result.total}</strong></td>
+                        {hasAnyRozstrel && <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
