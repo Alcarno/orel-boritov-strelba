@@ -72,18 +72,22 @@ function App() {
           </div>
         </header>
         <main className="app-main">
-          <div className="container">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/register-player" element={<RegisterPlayer />} />
-              <Route path="/add-competition" element={<AddCompetition />} />
-              <Route path="/add-results" element={<AddResults />} />
-              <Route path="/results" element={<ViewResults />} />
-              <Route path="/player-history" element={<PlayerHistory />} />
-              <Route path="/statistics" element={<Statistics />} />
-              <Route path="/management" element={<Management />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/results" element={<ViewResults />} />
+            <Route path="*" element={
+              <div className="container">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/register-player" element={<RegisterPlayer />} />
+                  <Route path="/add-competition" element={<AddCompetition />} />
+                  <Route path="/add-results" element={<AddResults />} />
+                  <Route path="/player-history" element={<PlayerHistory />} />
+                  <Route path="/statistics" element={<Statistics />} />
+                  <Route path="/management" element={<Management />} />
+                </Routes>
+              </div>
+            } />
+          </Routes>
         </main>
       </div>
     </HashRouter>

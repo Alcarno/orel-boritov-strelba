@@ -89,7 +89,7 @@ export function ViewResults() {
   };
 
   return (
-    <div className="card" style={{ maxWidth: 'none' }}>
+    <div className="card" style={{ margin: '0 1rem 2rem 1rem', borderRadius: '10px' }}>
       <h2>Výsledky soutěží</h2>
 
       <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
@@ -253,20 +253,18 @@ export function ViewResults() {
 
           <div style={{
             display: 'flex',
-            gap: '1.5rem',
-            overflowX: 'auto',
-            paddingBottom: '1rem',
+            gap: '1rem',
+            flexWrap: 'nowrap',
           }}>
             {Object.entries(results.categoryResults)
               .filter(([category]) => !categoryFilter || category === categoryFilter)
               .map(([category, categoryResults]) => (
               <div key={category} style={{
-                flex: '0 0 auto',
-                minWidth: '320px',
-                maxWidth: '400px',
+                flex: '1 1 0',
+                minWidth: 0,
                 background: '#fafafa',
                 borderRadius: '8px',
-                padding: '1rem',
+                padding: '0.75rem',
                 border: '1px solid #e0e0e0',
               }}>
                 <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1rem', textAlign: 'center' }}>
