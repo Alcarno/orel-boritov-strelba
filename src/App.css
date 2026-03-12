@@ -248,23 +248,172 @@ body {
   opacity: 0.9;
 }
 
+.results-categories {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+.results-page .form-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 768px) {
+  .results-categories {
+    flex-direction: column;
+  }
+
+  .results-page {
+    margin: 0 0.5rem 1rem 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .form-group select,
+  .form-group input {
+    max-width: 100% !important;
+  }
+
+  .table-scroll {
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .home-actions {
+    flex-direction: column;
+  }
+
+  .home-actions .btn {
+    text-align: center;
+  }
+  .app-header {
+    padding: 0.75rem 0;
+  }
+
+  .app-header .container {
+    padding: 0 1rem;
+  }
+
+  .header-content {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
   .app-header h1 {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
   }
 
   .main-nav {
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
   }
 
   .main-nav a {
-    width: 100%;
     text-align: center;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .app-main {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 0.75rem;
   }
 
   .card {
-    padding: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .alert {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header h1 {
+    font-size: 0.95rem;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .main-nav {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.3rem;
+  }
+
+  .main-nav a {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.3rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.3rem 0.2rem;
+    font-size: 0.75rem;
   }
 }
 

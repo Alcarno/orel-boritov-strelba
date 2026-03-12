@@ -42,6 +42,7 @@ export function PlayerHistory() {
           {history.length === 0 ? (
             <p style={{ color: '#999' }}>Tento hráč zatím nemá žádné výsledky.</p>
           ) : (
+            <div className="table-scroll">
             <table className="table">
               <thead>
                 <tr>
@@ -77,6 +78,7 @@ export function PlayerHistory() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
 
           {scoredHistory.length > 0 && (

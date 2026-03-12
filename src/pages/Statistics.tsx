@@ -26,6 +26,7 @@ export function Statistics() {
       {stats.playersPerCompetition.length > 0 && (
         <div style={{ marginTop: '2rem' }}>
           <h3 style={{ marginBottom: '1rem', color: '#8b6914' }}>Počet hráčů podle soutěží</h3>
+          <div className="table-scroll">
           <table className="table">
             <thead>
               <tr>
@@ -50,6 +51,7 @@ export function Statistics() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

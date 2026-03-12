@@ -101,7 +101,7 @@ export function ViewResults() {
   };
 
   return (
-    <div className="card" style={{ margin: '0 1rem 2rem 1rem', borderRadius: '10px' }}>
+    <div className="card results-page" style={{ margin: '0 1rem 2rem 1rem', borderRadius: '10px' }}>
       <h2>Výsledky soutěží</h2>
 
       <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
@@ -265,11 +265,7 @@ export function ViewResults() {
             </div>
           )}
 
-          <div style={{
-            display: 'flex',
-            gap: '1rem',
-            flexWrap: 'nowrap',
-          }}>
+          <div className="results-categories">
             {Object.entries(results.categoryResults)
               .filter(([category]) => !categoryFilter || category === categoryFilter)
               .map(([category, categoryResults]) => (
@@ -287,6 +283,7 @@ export function ViewResults() {
                 {categoryResults.length === 0 ? (
                   <p style={{ color: '#999', textAlign: 'center', padding: '1rem 0' }}>Žádné výsledky</p>
                 ) : (
+                  <div className="table-scroll">
                   <table className="table" style={{ fontSize: '0.9rem' }}>
                     <thead>
                       <tr>
@@ -326,6 +323,7 @@ export function ViewResults() {
                       })}
                     </tbody>
                   </table>
+                  </div>
                 )}
               </div>
             ))}
