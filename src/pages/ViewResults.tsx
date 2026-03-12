@@ -41,9 +41,17 @@ export function ViewResults() {
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
 
-      pdfRef.current.style.display = 'block';
-      const canvas = await html2canvas(pdfRef.current, { scale: 2 });
-      pdfRef.current.style.display = 'none';
+      pdfRef.current.style.position = 'fixed';
+      pdfRef.current.style.left = '0';
+      pdfRef.current.style.top = '0';
+      pdfRef.current.style.zIndex = '9999';
+      pdfRef.current.style.opacity = '1';
+      pdfRef.current.style.pointerEvents = 'none';
+      const canvas = await html2canvas(pdfRef.current, { scale: 2, useCORS: true });
+      pdfRef.current.style.position = 'absolute';
+      pdfRef.current.style.left = '-9999px';
+      pdfRef.current.style.zIndex = '-1';
+      pdfRef.current.style.opacity = '0';
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -327,7 +335,7 @@ export function ViewResults() {
       )}
 
       {results && (
-        <div ref={pdfRef} style={{ display: 'none', position: 'absolute', left: '-9999px', width: '800px', background: 'white', padding: '2rem', fontSize: '1.15rem' }}>
+        <div ref={pdfRef} style={{ position: 'absolute', left: '-9999px', width: '800px', background: 'white', padding: '2rem', fontSize: '1.15rem', opacity: 0, zIndex: -1 }}>
           <h2 style={{ marginBottom: '0.5rem', color: '#8b6914', fontSize: '1.8rem' }}>
             {getCompetitionLabel(results.competition)}
           </h2>
