@@ -65,14 +65,14 @@ export function calculateResults(competitionId: string): CompetitionResults {
     sortAndAssignPositions(categoryResults[category as Category]);
   });
 
-  const allWithPlayers = results
-    .map(result => {
-      const player = players.find(p => p.id === result.playerId);
-      return player ? { player, result } : null;
-    })
-    .filter((item): item is { player: Player; result: Result } => item !== null);
+  const categoryWinners: { player: Player; result: Result }[] = [];
+  Object.values(categoryResults).forEach(catList => {
+    if (catList.length > 0 && catList[0].position === 1) {
+      categoryWinners.push({ player: catList[0].player, result: catList[0].result });
+    }
+  });
 
-  allWithPlayers.sort((a, b) => {
+  categoryWinners.sort((a, b) => {
     if (b.result.total !== a.result.total) return b.result.total - a.result.total;
     const rozA = a.result.rozstrel ?? 0;
     const rozB = b.result.rozstrel ?? 0;
@@ -82,15 +82,16 @@ export function calculateResults(competitionId: string): CompetitionResults {
   let absoluteWinners: { player: Player; result: Result }[] = [];
   let absoluteTiedByTotal: { player: Player; result: Result }[] = [];
 
-  if (allWithPlayers.length > 0) {
-    const highestTotal = allWithPlayers[0].result.total;
-    absoluteTiedByTotal = allWithPlayers.filter(item => item.result.total === highestTotal);
+  if (categoryWinners.length > 0) {
+    const highestTotal = categoryWinners[0].result.total;
+    absoluteTiedByTotal = categoryWinners.filter(item => item.result.total === highestTotal);
 
     if (absoluteTiedByTotal.length === 1) {
       absoluteWinners = absoluteTiedByTotal;
     } else {
-      const bestRozstrel = absoluteTiedByTotal[0].result.rozstrel ?? 0;
-      absoluteWinners = absoluteTiedByTotal.filter(
+      const sorted = [...absoluteTiedByTotal].sort((a, b) => (b.result.rozstrel ?? 0) - (a.result.rozstrel ?? 0));
+      const bestRozstrel = sorted[0].result.rozstrel ?? 0;
+      absoluteWinners = sorted.filter(
         item => (item.result.rozstrel ?? 0) === bestRozstrel
       );
     }
