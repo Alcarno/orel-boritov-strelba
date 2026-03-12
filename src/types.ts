@@ -57,10 +57,10 @@ export interface CompetitionResults {
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  'chlapci-do-15': 'Chlapci do 15 let',
-  'divky-do-15': 'Dívky do 15 let',
-  'muzi-od-16': 'Muži od 16 let',
-  'zeny-od-16': 'Ženy od 16 let',
+  'chlapci-do-15': 'Chlapci do 14,99 let',
+  'divky-do-15': 'Dívky do 14,99 let',
+  'muzi-od-16': 'Muži od 15 let',
+  'zeny-od-16': 'Ženy od 15 let',
 };
 
 export const COMPETITION_TYPE_LABELS: Record<CompetitionType, string> = {

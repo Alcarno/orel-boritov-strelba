@@ -202,7 +202,7 @@ export function Management() {
         <div>
           <h3 style={{ color: '#8b6914', marginBottom: '1rem' }}>Přechod mezi kategoriemi</h3>
           <p style={{ color: '#666', marginBottom: '1rem', fontSize: '0.9rem' }}>
-            Povolené převody: Chlapci do 15 let → Muži od 16 let, Dívky do 15 let → Ženy od 16 let
+            Povolené převody: Chlapci do 14,99 let → Muži od 15 let, Dívky do 14,99 let → Ženy od 15 let
           </p>
           <div className="form-group">
             <label htmlFor="transfer-player">Vyberte hráče</label>
