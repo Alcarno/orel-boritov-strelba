@@ -166,63 +166,74 @@ export function ViewResults() {
                   <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
                 </p>
               ))}
+            </div>
+          )}
 
-              {results.absoluteTiedByTotal.length > 1 && (
+          {results.pools.some(p => p.ties.length > 0) && (
+            <div style={{ marginBottom: '2rem' }}>
+              {tiebreakMessage && (
                 <div style={{
-                  marginTop: '1rem',
-                  padding: '1rem',
-                  background: 'rgba(255,255,255,0.15)',
-                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '5px',
+                  background: tiebreakMessage.type === 'success' ? '#d4edda' : '#f8d7da',
+                  color: tiebreakMessage.type === 'success' ? '#155724' : '#721c24',
+                  border: `1px solid ${tiebreakMessage.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
                 }}>
-                  <p style={{ marginBottom: '0.75rem', fontWeight: 'bold' }}>
-                    ⚡ Shoda bodů ({results.absoluteTiedByTotal.length} hráči s {results.absoluteTiedByTotal[0].result.total} body) – zadejte rozstřel:
-                  </p>
-                  {tiebreakMessage && (
-                    <div style={{
-                      marginBottom: '0.75rem',
-                      padding: '0.5rem 0.75rem',
-                      borderRadius: '5px',
-                      background: tiebreakMessage.type === 'success' ? '#38a169' : '#e53e3e',
-                      color: 'white',
-                    }}>
-                      {tiebreakMessage.text}
-                    </div>
-                  )}
-                  {results.absoluteTiedByTotal.map((tied) => (
-                    <div key={tied.result.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                      <span style={{ minWidth: '200px' }}>
-                        {tied.player.name}
-                        <small style={{ opacity: 0.8 }}> ({CATEGORY_LABELS[tied.result.categoryAtTime || tied.player.category]})</small>:
-                      </span>
-                      <input
-                        type="number"
-                        min="0"
-                        max="50"
-                        value={tiebreakInputs[tied.result.id] ?? (tied.result.rozstrel != null ? String(tied.result.rozstrel) : '')}
-                        onChange={(e) => setTiebreakInputs(prev => ({ ...prev, [tied.result.id]: e.target.value }))}
-                        placeholder="Rozstřel (0-50)"
-                        style={{
-                          width: '140px',
-                          padding: '0.4rem 0.6rem',
-                          borderRadius: '5px',
-                          border: '1px solid rgba(255,255,255,0.4)',
-                          background: 'rgba(255,255,255,0.2)',
-                          color: 'white',
-                          fontSize: '0.95rem',
-                        }}
-                      />
+                  {tiebreakMessage.text}
+                </div>
+              )}
+              {results.pools.filter(p => p.ties.length > 0).map(pool => (
+                <div key={pool.name} style={{
+                  padding: '1.25rem',
+                  background: '#fff8e1',
+                  border: '2px solid #e6b422',
+                  borderRadius: '10px',
+                  marginBottom: '1rem',
+                }}>
+                  <h4 style={{ marginBottom: '0.75rem', color: '#8b6914' }}>
+                    ⚡ Rozstřel – {pool.name} ({pool.categories.map(c => CATEGORY_LABELS[c]).join(' + ')})
+                  </h4>
+                  {pool.ties.map(tie => (
+                    <div key={tie.total} style={{ marginBottom: '1rem' }}>
+                      <p style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: '#555' }}>
+                        Shoda: {tie.total} bodů ({tie.players.length} hráčů)
+                      </p>
+                      {tie.players.map(tp => (
+                        <div key={tp.result.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                          <span style={{ minWidth: '220px' }}>
+                            <strong>{tp.player.name}</strong>
+                            <small style={{ color: '#888' }}> ({CATEGORY_LABELS[tp.category]})</small>
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="50"
+                            value={tiebreakInputs[tp.result.id] ?? (tp.result.rozstrel != null ? String(tp.result.rozstrel) : '')}
+                            onChange={(e) => setTiebreakInputs(prev => ({ ...prev, [tp.result.id]: e.target.value }))}
+                            placeholder="Rozstřel (0-50)"
+                            style={{
+                              width: '130px',
+                              padding: '0.4rem 0.6rem',
+                              borderRadius: '5px',
+                              border: '2px solid #e6b422',
+                              fontSize: '0.95rem',
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
                   ))}
                   <button
                     onClick={() => {
-                      const tied = results!.absoluteTiedByTotal;
+                      const allTied = pool.ties.flatMap(t => t.players);
                       let hasValue = false;
-                      for (const t of tied) {
+                      for (const t of allTied) {
                         const val = tiebreakInputs[t.result.id];
                         if (val != null && val !== '') {
                           const num = parseInt(val);
                           if (isNaN(num) || num < 0 || num > 50) {
-                            setTiebreakMessage({ type: 'error', text: `Neplatná hodnota pro ${t.player.name}. Zadejte číslo 0–50.` });
+                            setTiebreakMessage({ type: 'error', text: `Neplatná hodnota pro ${t.player.name}. Zadejte 0–50.` });
                             return;
                           }
                           hasValue = true;
@@ -232,11 +243,10 @@ export function ViewResults() {
                         setTiebreakMessage({ type: 'error', text: 'Zadejte rozstřel alespoň jednomu hráči.' });
                         return;
                       }
-                      for (const t of tied) {
+                      for (const t of allTied) {
                         const val = tiebreakInputs[t.result.id];
                         if (val != null && val !== '') {
-                          const updated = { ...t.result, rozstrel: parseInt(val) };
-                          storage.results.update(updated);
+                          storage.results.update({ ...t.result, rozstrel: parseInt(val) });
                         }
                       }
                       setTiebreakInputs({});
@@ -244,21 +254,13 @@ export function ViewResults() {
                       setRefresh(n => n + 1);
                       setTimeout(() => setTiebreakMessage(null), 3000);
                     }}
-                    style={{
-                      marginTop: '0.5rem',
-                      padding: '0.5rem 1.25rem',
-                      borderRadius: '5px',
-                      border: 'none',
-                      background: 'white',
-                      color: '#8b6914',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                    }}
+                    className="btn btn-primary"
+                    style={{ marginTop: '0.5rem' }}
                   >
                     Uložit rozstřel
                   </button>
                 </div>
-              )}
+              ))}
             </div>
           )}
 

@@ -1,4 +1,4 @@
-import { Player, Competition, Result, Category, CategoryResult, CompetitionResults } from '../types';
+import { Player, Competition, Result, Category, CategoryResult, CompetitionResults, PoolInfo, PoolTieGroup, CATEGORY_POOLS } from '../types';
 import { storage } from './storage';
 
 function getSurname(name: string): string {
@@ -65,6 +65,36 @@ export function calculateResults(competitionId: string): CompetitionResults {
     sortAndAssignPositions(categoryResults[category as Category]);
   });
 
+  const pools: PoolInfo[] = CATEGORY_POOLS.map(poolDef => {
+    const poolPlayers: { player: Player; result: Result; category: Category }[] = [];
+    for (const cat of poolDef.categories) {
+      const top3 = categoryResults[cat].slice(0, 3);
+      for (const cr of top3) {
+        poolPlayers.push({ player: cr.player, result: cr.result, category: cat });
+      }
+    }
+
+    const totalGroups = new Map<number, typeof poolPlayers>();
+    for (const pp of poolPlayers) {
+      const group = totalGroups.get(pp.result.total) || [];
+      group.push(pp);
+      totalGroups.set(pp.result.total, group);
+    }
+
+    const ties: PoolTieGroup[] = [];
+    for (const [total, group] of totalGroups) {
+      if (group.length > 1) {
+        const hasCrossCategory = new Set(group.map(g => g.category)).size > 1;
+        if (hasCrossCategory) {
+          ties.push({ total, players: group });
+        }
+      }
+    }
+    ties.sort((a, b) => b.total - a.total);
+
+    return { name: poolDef.name, categories: poolDef.categories, ties };
+  });
+
   const categoryWinners: { player: Player; result: Result }[] = [];
   Object.values(categoryResults).forEach(catList => {
     if (catList.length > 0 && catList[0].position === 1) {
@@ -74,34 +104,23 @@ export function calculateResults(competitionId: string): CompetitionResults {
 
   categoryWinners.sort((a, b) => {
     if (b.result.total !== a.result.total) return b.result.total - a.result.total;
-    const rozA = a.result.rozstrel ?? 0;
-    const rozB = b.result.rozstrel ?? 0;
-    return rozB - rozA;
+    return (b.result.rozstrel ?? 0) - (a.result.rozstrel ?? 0);
   });
 
   let absoluteWinners: { player: Player; result: Result }[] = [];
-  let absoluteTiedByTotal: { player: Player; result: Result }[] = [];
-
   if (categoryWinners.length > 0) {
-    const highestTotal = categoryWinners[0].result.total;
-    absoluteTiedByTotal = categoryWinners.filter(item => item.result.total === highestTotal);
-
-    if (absoluteTiedByTotal.length === 1) {
-      absoluteWinners = absoluteTiedByTotal;
-    } else {
-      const sorted = [...absoluteTiedByTotal].sort((a, b) => (b.result.rozstrel ?? 0) - (a.result.rozstrel ?? 0));
-      const bestRozstrel = sorted[0].result.rozstrel ?? 0;
-      absoluteWinners = sorted.filter(
-        item => (item.result.rozstrel ?? 0) === bestRozstrel
-      );
-    }
+    const best = categoryWinners[0];
+    absoluteWinners = categoryWinners.filter(
+      item => item.result.total === best.result.total
+        && (item.result.rozstrel ?? 0) === (best.result.rozstrel ?? 0)
+    );
   }
 
   return {
     competition,
     categoryResults,
     absoluteWinners,
-    absoluteTiedByTotal,
+    pools,
   };
 }
 

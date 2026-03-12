@@ -45,6 +45,17 @@ export interface CategoryResult {
   position: number;
 }
 
+export interface PoolTieGroup {
+  total: number;
+  players: { player: Player; result: Result; category: Category }[];
+}
+
+export interface PoolInfo {
+  name: string;
+  categories: [Category, Category];
+  ties: PoolTieGroup[];
+}
+
 export interface CompetitionResults {
   competition: Competition;
   categoryResults: {
@@ -54,11 +65,13 @@ export interface CompetitionResults {
     player: Player;
     result: Result;
   }[];
-  absoluteTiedByTotal: {
-    player: Player;
-    result: Result;
-  }[];
+  pools: PoolInfo[];
 }
+
+export const CATEGORY_POOLS: { name: string; categories: [Category, Category] }[] = [
+  { name: 'Dospělí', categories: ['muzi-od-16', 'zeny-od-16'] },
+  { name: 'Mládež', categories: ['chlapci-do-15', 'divky-do-15'] },
+];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
   'chlapci-do-15': 'Chlapci do 14,99 let',
