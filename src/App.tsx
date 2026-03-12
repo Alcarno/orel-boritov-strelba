@@ -55,10 +55,10 @@ function App() {
       <div className="app">
         <header className="app-header">
           <div className="container">
-            <div className="header-content">
+            <Link to="/" className="header-content" style={{ textDecoration: 'none', color: 'inherit' }}>
               <img src="./logo.png" alt="Orel Bořitov" className="logo" />
               <h1>Orel Bořitov - Střelba ze vzduchovek</h1>
-            </div>
+            </Link>
             <nav className="main-nav">
               <Link to="/">Domů</Link>
               <Link to="/register-player">Registrovat hráče</Link>
