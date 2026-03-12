@@ -19,7 +19,7 @@ export function AddResults() {
 
   const competitions = storage.competitions.getAll().sort((a, b) => {
     if (a.year !== b.year) return b.year - a.year;
-    return a.type === 'jarni' ? -1 : 1;
+    return a.type === 'podzimni' ? -1 : 1;
   });
 
   const selectedCompetition = competitionId

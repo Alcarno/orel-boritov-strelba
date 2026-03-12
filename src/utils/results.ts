@@ -149,7 +149,7 @@ export function getPlayerHistory(playerId: string): Array<{ competition: Competi
       if (a.competition.year !== b.competition.year) {
         return b.competition.year - a.competition.year;
       }
-      return a.competition.type === 'jarni' ? -1 : 1;
+      return a.competition.type === 'podzimni' ? -1 : 1;
     });
 }
 
