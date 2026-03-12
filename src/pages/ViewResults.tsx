@@ -143,7 +143,7 @@ export function ViewResults() {
               borderRadius: '10px'
             }}>
               <h4 style={{ marginBottom: '0.5rem' }}>
-                🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (shoda)' : 'Absolutní vítěz'}
+                🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (nerozhodnuto)' : 'Absolutní vítěz'}
               </h4>
               {results.absoluteWinners.map((winner, idx) => (
                 <p key={idx} style={{ fontSize: '1.2rem', marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
@@ -156,7 +156,7 @@ export function ViewResults() {
                 </p>
               ))}
 
-              {results.absoluteWinners.length > 1 && (
+              {results.absoluteTiedByTotal.length > 1 && (
                 <div style={{
                   marginTop: '1rem',
                   padding: '1rem',
@@ -164,7 +164,7 @@ export function ViewResults() {
                   borderRadius: '8px',
                 }}>
                   <p style={{ marginBottom: '0.75rem', fontWeight: 'bold' }}>
-                    ⚡ Shoda bodů – zadejte rozstřel pro určení absolutního vítěze:
+                    ⚡ Shoda bodů ({results.absoluteTiedByTotal.length} hráči s {results.absoluteTiedByTotal[0].result.total} body) – zadejte rozstřel:
                   </p>
                   {tiebreakMessage && (
                     <div style={{
@@ -177,15 +177,18 @@ export function ViewResults() {
                       {tiebreakMessage.text}
                     </div>
                   )}
-                  {results.absoluteWinners.map((winner) => (
-                    <div key={winner.result.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                      <span style={{ minWidth: '150px' }}>{winner.player.name}:</span>
+                  {results.absoluteTiedByTotal.map((tied) => (
+                    <div key={tied.result.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                      <span style={{ minWidth: '200px' }}>
+                        {tied.player.name}
+                        <small style={{ opacity: 0.8 }}> ({CATEGORY_LABELS[tied.result.categoryAtTime || tied.player.category]})</small>:
+                      </span>
                       <input
                         type="number"
                         min="0"
                         max="50"
-                        value={tiebreakInputs[winner.result.id] ?? (winner.result.rozstrel != null ? String(winner.result.rozstrel) : '')}
-                        onChange={(e) => setTiebreakInputs(prev => ({ ...prev, [winner.result.id]: e.target.value }))}
+                        value={tiebreakInputs[tied.result.id] ?? (tied.result.rozstrel != null ? String(tied.result.rozstrel) : '')}
+                        onChange={(e) => setTiebreakInputs(prev => ({ ...prev, [tied.result.id]: e.target.value }))}
                         placeholder="Rozstřel (0-50)"
                         style={{
                           width: '140px',
@@ -201,14 +204,14 @@ export function ViewResults() {
                   ))}
                   <button
                     onClick={() => {
-                      const winners = results!.absoluteWinners;
+                      const tied = results!.absoluteTiedByTotal;
                       let hasValue = false;
-                      for (const w of winners) {
-                        const val = tiebreakInputs[w.result.id];
+                      for (const t of tied) {
+                        const val = tiebreakInputs[t.result.id];
                         if (val != null && val !== '') {
                           const num = parseInt(val);
                           if (isNaN(num) || num < 0 || num > 50) {
-                            setTiebreakMessage({ type: 'error', text: `Neplatná hodnota pro ${w.player.name}. Zadejte číslo 0–50.` });
+                            setTiebreakMessage({ type: 'error', text: `Neplatná hodnota pro ${t.player.name}. Zadejte číslo 0–50.` });
                             return;
                           }
                           hasValue = true;
@@ -218,10 +221,10 @@ export function ViewResults() {
                         setTiebreakMessage({ type: 'error', text: 'Zadejte rozstřel alespoň jednomu hráči.' });
                         return;
                       }
-                      for (const w of winners) {
-                        const val = tiebreakInputs[w.result.id];
+                      for (const t of tied) {
+                        const val = tiebreakInputs[t.result.id];
                         if (val != null && val !== '') {
-                          const updated = { ...w.result, rozstrel: parseInt(val) };
+                          const updated = { ...t.result, rozstrel: parseInt(val) };
                           storage.results.update(updated);
                         }
                       }

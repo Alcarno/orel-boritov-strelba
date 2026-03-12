@@ -80,18 +80,27 @@ export function calculateResults(competitionId: string): CompetitionResults {
   });
 
   let absoluteWinners: { player: Player; result: Result }[] = [];
+  let absoluteTiedByTotal: { player: Player; result: Result }[] = [];
+
   if (allWithPlayers.length > 0) {
-    const best = allWithPlayers[0];
-    absoluteWinners = allWithPlayers.filter(
-      item => item.result.total === best.result.total
-        && (item.result.rozstrel ?? 0) === (best.result.rozstrel ?? 0)
-    );
+    const highestTotal = allWithPlayers[0].result.total;
+    absoluteTiedByTotal = allWithPlayers.filter(item => item.result.total === highestTotal);
+
+    if (absoluteTiedByTotal.length === 1) {
+      absoluteWinners = absoluteTiedByTotal;
+    } else {
+      const bestRozstrel = absoluteTiedByTotal[0].result.rozstrel ?? 0;
+      absoluteWinners = absoluteTiedByTotal.filter(
+        item => (item.result.rozstrel ?? 0) === bestRozstrel
+      );
+    }
   }
 
   return {
     competition,
     categoryResults,
     absoluteWinners,
+    absoluteTiedByTotal,
   };
 }
 

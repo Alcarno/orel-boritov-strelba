@@ -54,6 +54,10 @@ export interface CompetitionResults {
     player: Player;
     result: Result;
   }[];
+  absoluteTiedByTotal: {
+    player: Player;
+    result: Result;
+  }[];
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
