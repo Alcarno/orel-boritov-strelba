@@ -106,67 +106,68 @@ export function ViewResults() {
 
       <div className="results-top-bar">
         <div className="results-filters">
-          <h3 style={{ marginBottom: '0.5rem', color: '#8b6914' }}>
-            {results ? getCompetitionLabel(results.competition) : 'Výběr soutěže'}
-          </h3>
-          <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem', flexWrap: 'wrap', marginBottom: 0 }}>
-            <div style={{ flex: 1, minWidth: '200px' }}>
-              <label htmlFor="competition-select">Soutěž</label>
-              <select
-                id="competition-select"
-                value={selectedCompetitionId}
-                onChange={(e) => setSelectedCompetitionId(e.target.value)}
-              >
-                <option value="">-- Vyberte soutěž --</option>
-                {competitions.map(competition => (
-                  <option key={competition.id} value={competition.id}>
-                    {getCompetitionLabel(competition)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div style={{ minWidth: '180px' }}>
-              <label htmlFor="category-filter">Kategorie</label>
-              <select
-                id="category-filter"
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value as Category | '')}
-              >
-                <option value="">-- Všechny --</option>
-                {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
-                ))}
-              </select>
-            </div>
-            {results && (
-              <button className="btn btn-primary" onClick={handleExportPdf} style={{ whiteSpace: 'nowrap' }}>
-                📄 Export PDF
-              </button>
-            )}
+          <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+            <label htmlFor="competition-select">Soutěž</label>
+            <select
+              id="competition-select"
+              value={selectedCompetitionId}
+              onChange={(e) => setSelectedCompetitionId(e.target.value)}
+            >
+              <option value="">-- Vyberte soutěž --</option>
+              {competitions.map(competition => (
+                <option key={competition.id} value={competition.id}>
+                  {getCompetitionLabel(competition)}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
+
+        <div className="results-controls">
+          <div className="form-group" style={{ marginBottom: '0.5rem', minWidth: '180px' }}>
+            <label htmlFor="category-filter">Kategorie</label>
+            <select
+              id="category-filter"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value as Category | '')}
+            >
+              <option value="">-- Všechny --</option>
+              {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+          </div>
+          {results && (
+            <button className="btn btn-primary" onClick={handleExportPdf} style={{ whiteSpace: 'nowrap' }}>
+              📄 Export PDF
+            </button>
+          )}
         </div>
 
         {results && results.absoluteWinners.length > 0 && (
           <div className="results-winner" style={{
-            padding: '0.75rem 1rem',
+            padding: '1rem 1.5rem',
             background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
             color: 'white',
             borderRadius: '10px',
             textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
           }}>
-            <h4 style={{ marginBottom: '0.3rem', fontSize: '0.95rem' }}>
+            <h4 style={{ marginBottom: '0.4rem', fontSize: '1.2rem' }}>
               🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
             </h4>
             {results.absoluteWinners.map((winner, idx) => (
-              <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.3rem' : 0 }}>
-                <p style={{ fontSize: '1.05rem', fontWeight: 'bold', marginBottom: '0.1rem' }}>
+              <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.4rem' : 0 }}>
+                <p style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.15rem' }}>
                   {winner.player.name}
                 </p>
-                <p style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>
+                <p style={{ fontSize: '1.15rem', marginBottom: '0.1rem' }}>
                   {winner.result.total} bodů
-                  {winner.result.rozstrel != null && ` (R: ${winner.result.rozstrel})`}
+                  {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
                 </p>
-                <p style={{ fontSize: '0.8rem', opacity: 0.85 }}>
+                <p style={{ fontSize: '0.9rem', opacity: 0.85 }}>
                   {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
                 </p>
               </div>
