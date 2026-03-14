@@ -256,20 +256,21 @@ body {
 }
 
 .results-filters {
-  flex: 0 0 40%;
+  flex: 0 0 30%;
   min-width: 0;
 }
 
 .results-controls {
-  flex: 0 0 auto;
+  flex: 0 0 20%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .results-winner {
-  flex: 1;
-  min-width: 250px;
+  flex: 0 0 50%;
+  min-width: 0;
 }
 
 .results-categories {

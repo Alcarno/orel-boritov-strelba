@@ -138,7 +138,7 @@ export function ViewResults() {
             </select>
           </div>
           {results && (
-            <button className="btn btn-primary" onClick={handleExportPdf} style={{ whiteSpace: 'nowrap' }}>
+            <button className="btn" onClick={handleExportPdf} style={{ whiteSpace: 'nowrap', background: '#6c757d', color: 'white' }}>
               📄 Export PDF
             </button>
           )}
@@ -154,20 +154,20 @@ export function ViewResults() {
             alignItems: 'center',
             gap: '1.5rem',
           }}>
-            <h4 style={{ fontSize: '1.5rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            <h4 style={{ fontSize: '1.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
               🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
             </h4>
             <div style={{ flex: 1 }}>
               {results.absoluteWinners.map((winner, idx) => (
-                <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.4rem' : 0 }}>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
+                  <span style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
                     {winner.player.name}
                   </span>
-                  <span style={{ fontSize: '1.3rem', marginLeft: '0.75rem' }}>
+                  <span style={{ fontSize: '1.5rem', marginLeft: '0.75rem' }}>
                     {winner.result.total} bodů
                     {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
                   </span>
-                  <span style={{ fontSize: '1rem', marginLeft: '0.75rem', opacity: 0.85 }}>
+                  <span style={{ fontSize: '1.1rem', marginLeft: '0.75rem', opacity: 0.85 }}>
                     {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
                   </span>
                 </div>
