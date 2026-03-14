@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Uživatelská dokumentace – Orel Bořitov</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 860px; margin: 0 auto; padding: 2rem; color: #222; line-height: 1.65; font-size: 11pt; }
+  h1 { color: #8b6914; border-bottom: 3px solid #e6b422; padding-bottom: 0.5rem; font-size: 20pt; margin-bottom: 0.2rem; }
+  h1 + h1 { border: none; font-size: 14pt; color: #666; margin-top: 0; padding-bottom: 0; }
+  h2 { color: #8b6914; border-bottom: 2px solid #e0d5b0; padding-bottom: 0.25rem; margin-top: 2rem; font-size: 14pt; }
+  h3 { color: #6b5310; margin-top: 1.3rem; font-size: 11.5pt; }
+  h4 { color: #555; margin-top: 1rem; font-size: 11pt; }
+  table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
+  th, td { border: 1px solid #ccc; padding: 0.4rem 0.65rem; text-align: left; font-size: 10pt; }
+  th { background: #f8f3e6; color: #6b5310; font-weight: 600; }
+  tr:nth-child(even) { background: #fafafa; }
+  ul, ol { margin: 0.4rem 0; padding-left: 1.4rem; }
+  li { margin-bottom: 0.25rem; }
+  hr { border: none; border-top: 2px solid #e6b422; margin: 1.8rem 0; }
+  code { background: #f4f1ea; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+  pre { background: #f4f1ea; border: 1px solid #d5cdb8; border-radius: 5px; padding: 0.75rem; font-size: 10pt; line-height: 1.4; }
+  strong { color: #333; }
+  .page-break { page-break-before: always; }
+  .subtitle { font-size: 13pt; color: #666; margin-top: 0; margin-bottom: 1.5rem; }
+  @media print {
+    body { padding: 0; }
+    h2 { page-break-after: avoid; }
+    table, pre { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Orel Bořitov – Střelba ze vzduchovek</h1>
+<p class="subtitle">Uživatelská dokumentace</p>
+
+<hr>
+
+<h2>1. Úvod</h2>
+<p>Aplikace slouží ke správě soutěží ve střelbě ze vzduchovek pro organizaci Orel Bořitov. Umožňuje registrovat hráče, zakládat soutěže, zadávat výsledky, prohlížet výsledkové listiny, exportovat je do PDF a spravovat celý systém.</p>
+<p><strong>Adresa aplikace:</strong> https://alcarno.github.io/orel-boritov-strelba/</p>
+<p>Aplikace funguje v prohlížeči na počítači i na mobilu. Data se ukládají do cloudové databáze (Supabase).</p>
+
+<hr>
+
+<h2>2. Navigace</h2>
+<p>Horní lišta obsahuje logo a název aplikace – kliknutím na ně se vždy vrátíte na domovskou stránku. Pod tím jsou odkazy na jednotlivé sekce:</p>
+<table>
+  <tr><th>Odkaz</th><th>Co tam najdete</th></tr>
+  <tr><td>Domů</td><td>Přehled a rychlé akce</td></tr>
+  <tr><td>Registrovat hráče</td><td>Přidání nového hráče do systému</td></tr>
+  <tr><td>Nová soutěž</td><td>Vytvoření nové soutěže (jarní/podzimní)</td></tr>
+  <tr><td>Zadat výsledky</td><td>Zadání bodů hráčům v konkrétní soutěži</td></tr>
+  <tr><td>Výsledky</td><td>Zobrazení výsledkových listin + export do PDF</td></tr>
+  <tr><td>Historie hráče</td><td>Přehled všech výsledků jednoho hráče</td></tr>
+  <tr><td>Statistiky</td><td>Rekordy, počty hráčů, zajímavosti</td></tr>
+  <tr><td>Správa</td><td>Mazání, zamykání, přechody kategorií (admin)</td></tr>
+</table>
+
+<hr>
+
+<h2>3. Kategorie hráčů</h2>
+<p>Systém rozlišuje 4 věkové kategorie:</p>
+<table>
+  <tr><th>Kategorie</th><th>Kdo sem patří</th></tr>
+  <tr><td>Chlapci do 14,99 let</td><td>Chlapci mladší 15 let</td></tr>
+  <tr><td>Dívky do 14,99 let</td><td>Dívky mladší 15 let</td></tr>
+  <tr><td>Muži od 15 let</td><td>Muži 15 let a starší</td></tr>
+  <tr><td>Ženy od 15 let</td><td>Ženy 15 let a starší</td></tr>
+</table>
+<p>Kategorii vybírá uživatel při registraci. Pokud hráč dosáhne 15 let, lze ho převést do dospělé kategorie (viz sekce Správa).</p>
+
+<hr>
+
+<h2>4. Registrace hráče</h2>
+<ol>
+  <li>Přejděte na <strong>Registrovat hráče</strong>.</li>
+  <li>Zadejte <strong>jméno hráče</strong>.</li>
+  <li>Vyberte <strong>kategorii</strong>.</li>
+  <li>Klikněte <strong>Registrovat hráče</strong>.</li>
+</ol>
+
+<h3>Co se děje automaticky:</h3>
+<ul>
+  <li><strong>Našeptávač:</strong> Jakmile napíšete alespoň 2 znaky, systém zobrazí podobná jména již registrovaných hráčů jako varování.</li>
+  <li><strong>Kontrola duplicit:</strong> Pokud hráč se stejným jménem už existuje:
+    <ul>
+      <li>Ve stejné kategorii → chyba, nelze registrovat znovu.</li>
+      <li>V mládežnické kategorii a registrujete ho do dospělé → systém nabídne převod.</li>
+      <li>V jiné nepovolené kombinaci → chyba.</li>
+    </ul>
+  </li>
+</ul>
+<p>Po úspěšné registraci zůstáváte na stránce a můžete ihned registrovat dalšího hráče. Zelená hláška o úspěchu zmizí až při další akci.</p>
+
+<hr>
+
+<h2>5. Vytvoření soutěže</h2>
+<ol>
+  <li>Přejděte na <strong>Nová soutěž</strong>.</li>
+  <li>Vyberte <strong>typ</strong> (Jarní střelby / Podzimní střelby).</li>
+  <li>Zadejte <strong>rok</strong> a <strong>datum konání</strong>.</li>
+  <li>Klikněte <strong>Vytvořit soutěž</strong>.</li>
+</ol>
+<p>Nová soutěž je ve výchozím stavu <strong>odemčená</strong> (lze do ní zadávat a měnit výsledky).</p>
+
+<hr>
+<div class="page-break"></div>
+
+<h2>6. Zadávání výsledků</h2>
+<ol>
+  <li>Přejděte na <strong>Zadat výsledky</strong>.</li>
+  <li>Vyberte <strong>soutěž</strong> z rozbalovacího seznamu.</li>
+  <li>Volitelně vyberte <strong>filtr kategorie</strong> (zobrazí jen hráče dané kategorie).</li>
+  <li>Vyberte <strong>hráče</strong>.</li>
+  <li>Zadejte body:
+    <ul>
+      <li><strong>Kolo 1</strong> (0–50 bodů) – nepovinné</li>
+      <li><strong>Kolo 2</strong> (0–50 bodů) – nepovinné</li>
+      <li><strong>Rozstřel</strong> (0–50 bodů) – zobrazí se automaticky, jen pokud je potřeba</li>
+    </ul>
+  </li>
+  <li>Klikněte <strong>Zadat výsledek</strong>.</li>
+</ol>
+
+<h3>Bodování:</h3>
+<ul>
+  <li><strong>Celkem = Kolo 1 + Kolo 2</strong> (rozstřel se do celku nepočítá)</li>
+  <li>Stačí zadat alespoň jednu hodnotu (např. jen rozstřel)</li>
+  <li>Pokud hráč už má výsledek v dané soutěži, zadané hodnoty se aktualizují</li>
+</ul>
+
+<h3>Kdy se zobrazí rozstřel:</h3>
+<p>Pole pro rozstřel se zobrazí automaticky, pokud na základě právě zadávaných bodů vznikne shoda na 1.–2. nebo 2.–3. místě v kategorii.</p>
+
+<h3>Uzamčená soutěž:</h3>
+<p>Pokud je soutěž uzamčená (🔒), systém vás požádá o heslo. Bez správného hesla nelze výsledky měnit.</p>
+
+<hr>
+
+<h2>7. Výsledky soutěží</h2>
+<ol>
+  <li>Přejděte na <strong>Výsledky</strong>.</li>
+  <li>Vyberte <strong>soutěž</strong>.</li>
+  <li>Volitelně vyberte <strong>filtr kategorie</strong>.</li>
+</ol>
+
+<h3>Co vidíte:</h3>
+<ul>
+  <li><strong>Absolutní vítěz</strong> – hráč s nejvyšším skóre ze všech vítězů kategorií (žlutý banner nahoře).</li>
+  <li><strong>Tabulky kategorií</strong> – na velkém displeji vedle sebe, na mobilu pod sebou.</li>
+  <li>Každá tabulka obsahuje: umístění, jméno, Kolo 1, Kolo 2, Celkem, případně Rozstřel.</li>
+  <li>Medaile: 🥇 1. místo, 🥈 2. místo, 🥉 3. místo.</li>
+</ul>
+
+<h3>Rozstřel mezi kategoriemi (poolový):</h3>
+<p>Pokud mají hráči z různých kategorií v rámci jednoho poolu (Dospělí = Muži + Ženy, Mládež = Chlapci + Dívky) stejný počet bodů na prvních 3 místech, zobrazí se žlutý formulář pro zadání rozstřelu. Po zadání a uložení se pořadí přepočítá.</p>
+
+<h3>Export do PDF:</h3>
+<p>Klikněte na tlačítko <strong>📄 Export PDF</strong>. Stáhne se PDF soubor s výsledky (kategorie pod sebou, větší písmo pro tisk). Název souboru: např. „Jarní střelby 2026.pdf".</p>
+
+<hr>
+
+<h2>8. Historie hráče</h2>
+<ol>
+  <li>Přejděte na <strong>Historie hráče</strong>.</li>
+  <li>Vyberte <strong>hráče</strong> ze seznamu.</li>
+</ol>
+<h3>Co vidíte:</h3>
+<ul>
+  <li>Tabulka všech soutěží, kterých se hráč zúčastnil (od nejnovější).</li>
+  <li>Sloupce: soutěž, rok, kategorie (v jaké kategorii tehdy hrál), Kolo 1, Kolo 2, Celkem, Umístění.</li>
+  <li>Souhrn pod tabulkou:
+    <ul>
+      <li><strong>Průměrný výsledek</strong> (ze všech soutěží)</li>
+      <li><strong>Nejlepší výsledek</strong> (nejvyšší celkové body)</li>
+      <li><strong>Nejlepší umístění</strong> (např. „1. místo")</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2>9. Statistiky</h2>
+<p>Na stránce <strong>Statistiky</strong> najdete:</p>
+<ol>
+  <li><strong>Přehledové karty:</strong> celkový počet hráčů, soutěží a výsledků.</li>
+  <li><strong>Počet hráčů podle soutěží:</strong> tabulka s rozpisem po kategoriích pro každou soutěž.</li>
+  <li><strong>Maximální výsledky podle kategorií:</strong> nejlepší hráč v každé kategorii napříč všemi soutěžemi.</li>
+  <li><strong>Absolutní rekord:</strong> nejlepší výsledek ze všech hráčů a soutěží (zlatý banner).</li>
+</ol>
+
+<hr>
+<div class="page-break"></div>
+
+<h2>10. Správa (administrace)</h2>
+<p>Stránka <strong>Správa</strong> je rozdělena na dvě části:</p>
+
+<h3>10.1 Správa hráčů a výsledků</h3>
+
+<h4>Smazat hráče</h4>
+<ul>
+  <li>Vyberte hráče → klikněte <strong>Smazat hráče</strong>.</li>
+  <li>Smaže hráče a <strong>všechny jeho výsledky</strong> ze všech soutěží.</li>
+  <li><strong>Nelze smazat</strong>, pokud má hráč výsledky v uzamčené soutěži. Nejprve soutěž odemkněte.</li>
+</ul>
+
+<h4>Smazat výsledek hráče</h4>
+<ul>
+  <li>Vyberte hráče a soutěž → klikněte <strong>Smazat výsledek</strong>.</li>
+  <li>Smaže pouze výsledek daného hráče v dané soutěži.</li>
+  <li><strong>Nelze smazat</strong> u uzamčené soutěže.</li>
+</ul>
+
+<h4>Přechod mezi kategoriemi</h4>
+<ul>
+  <li>Vyberte hráče → systém zobrazí možnost převodu.</li>
+  <li>Povolené převody:
+    <ul>
+      <li>Chlapci do 14,99 let → Muži od 15 let</li>
+      <li>Dívky do 14,99 let → Ženy od 15 let</li>
+    </ul>
+  </li>
+  <li>Zpětný převod není možný.</li>
+  <li>Historické výsledky zůstanou pod původní kategorií.</li>
+</ul>
+
+<h3>10.2 Správa soutěží</h3>
+
+<h4>Smazat soutěž</h4>
+<ul>
+  <li>Vyberte soutěž → klikněte <strong>Smazat soutěž</strong>.</li>
+  <li>Smaže soutěž a <strong>všechny její výsledky</strong>.</li>
+  <li><strong>Nelze smazat</strong> uzamčenou soutěž – nejprve ji odemkněte.</li>
+</ul>
+
+<h4>Uzamčení / odemčení soutěže</h4>
+<ul>
+  <li><strong>Uzamknout:</strong> Vyberte odemčenou soutěž → zadejte heslo → klikněte <strong>🔒 Uzamknout soutěž</strong>.</li>
+  <li><strong>Odemknout:</strong> Vyberte uzamčenou soutěž → zadejte heslo (nebo master heslo) → klikněte <strong>🔓 Odemknout soutěž</strong>.</li>
+</ul>
+
+<h4>Co zamčení znamená:</h4>
+<p>Uzamčenou soutěž <strong>nelze</strong>:</p>
+<ul>
+  <li>Smazat</li>
+  <li>Upravovat výsledky (bez hesla)</li>
+  <li>Mazat výsledky hráčů</li>
+  <li>Mazat hráče, kteří v ní mají výsledky</li>
+</ul>
+
+<h4>Zapomenuté heslo:</h4>
+<p>Pokud zapomenete heslo soutěže, použijte <strong>master heslo</strong> (hlavní heslo). To funguje pro odemčení jakékoli soutěže. Master heslo znají správci aplikace.</p>
+
+<hr>
+
+<h2>11. Rozstřel – pravidla</h2>
+
+<h3>Rozstřel v kategorii (při zadávání výsledků)</h3>
+<ul>
+  <li>Pole pro rozstřel se zobrazí automaticky, pokud má hráč na 1.–2. nebo 2.–3. místě stejný počet bodů jako jiný hráč v kategorii.</li>
+  <li>Rozstřel slouží k rozlišení pořadí, <strong>nepřičítá se</strong> k celkovému skóre.</li>
+</ul>
+
+<h3>Rozstřel mezi kategoriemi (poolový)</h3>
+<ul>
+  <li>Funguje v rámci dvou poolů:
+    <ul>
+      <li><strong>Dospělí</strong> = Muži + Ženy</li>
+      <li><strong>Mládež</strong> = Chlapci + Dívky</li>
+    </ul>
+  </li>
+  <li>Systém vezme <strong>top 3 hráče z každé kategorie</strong> v poolu.</li>
+  <li>Pokud mají hráči z <strong>různých kategorií</strong> stejný počet bodů, zobrazí se formulář pro rozstřel na stránce Výsledky.</li>
+  <li>Příklad: Muži mají 85, 85, 80 bodů a Ženy mají 85, 80, 79 bodů → rozstřel proběhne mezi dvěma muži a jednou ženou (všichni s 85 body).</li>
+</ul>
+
+<h3>Absolutní vítěz</h3>
+<ul>
+  <li>Absolutním vítězem je <strong>vítěz kategorie</strong> (1. místo) s nejvyšším celkovým skóre.</li>
+  <li>Pokud mají vítězové více kategorií stejné skóre i rozstřel, zobrazí se jako „Absolutní vítězové (nerozhodnuto)".</li>
+</ul>
+
+<hr>
+
+<h2>12. Řazení soutěží</h2>
+<p>Všude v aplikaci (roletky, výpisy, historie) se soutěže řadí <strong>od nejnovější nahoře</strong>:</p>
+<pre>
+Jarní 2026       (nahoře – nejnovější)
+Podzimní 2025
+Jarní 2025
+Podzimní 2024
+Jarní 2024       (dole – nejstarší)
+</pre>
+
+<hr>
+
+<h2>13. Zobrazení na různých zařízeních</h2>
+<ul>
+  <li><strong>Počítač / velká obrazovka:</strong> Kategorie výsledků se zobrazují vedle sebe na celou šířku. Vhodné i pro promítání na projektor.</li>
+  <li><strong>Tablet:</strong> Podobně jako počítač, s mírně kompaktnějším rozložením.</li>
+  <li><strong>Mobil:</strong> Navigace v mřížce 2×4, kategorie výsledků pod sebou, tabulky horizontálně posuvné, tlačítka na celou šířku.</li>
+</ul>
+
+</body>
+</html>

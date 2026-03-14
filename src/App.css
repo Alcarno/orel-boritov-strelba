@@ -248,10 +248,36 @@ body {
   opacity: 0.9;
 }
 
+.results-top-bar {
+  display: flex;
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: 0.5rem;
+}
+
+.results-filters {
+  flex: 1;
+  min-width: 0;
+}
+
+.results-winner {
+  flex: 1;
+  min-width: 0;
+}
+
 .results-categories {
   display: flex;
   gap: 1rem;
   flex-wrap: nowrap;
+}
+
+.results-table {
+  font-size: 1.15rem;
+}
+
+.results-table th,
+.results-table td {
+  padding: 0.5rem 0.6rem;
 }
 
 .results-page .form-group {
@@ -267,6 +293,20 @@ body {
 }
 
 @media (max-width: 768px) {
+  .results-top-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .results-table {
+    font-size: 0.9rem;
+  }
+
+  .results-table th,
+  .results-table td {
+    padding: 0.4rem 0.3rem;
+  }
+
   .results-categories {
     flex-direction: column;
   }

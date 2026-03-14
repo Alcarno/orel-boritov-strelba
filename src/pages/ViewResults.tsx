@@ -104,71 +104,77 @@ export function ViewResults() {
     <div className="card results-page" style={{ margin: '0 1rem 2rem 1rem', borderRadius: '10px' }}>
       <h2>Výsledky soutěží</h2>
 
-      <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: '250px' }}>
-          <label htmlFor="competition-select">Vyberte soutěž</label>
-          <select
-            id="competition-select"
-            value={selectedCompetitionId}
-            onChange={(e) => setSelectedCompetitionId(e.target.value)}
-          >
-            <option value="">-- Vyberte soutěž --</option>
-            {competitions.map(competition => (
-              <option key={competition.id} value={competition.id}>
-                {getCompetitionLabel(competition)}
-              </option>
-            ))}
-          </select>
+      <div className="results-top-bar">
+        <div className="results-filters">
+          <h3 style={{ marginBottom: '0.5rem', color: '#8b6914' }}>
+            {results ? getCompetitionLabel(results.competition) : 'Výběr soutěže'}
+          </h3>
+          <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem', flexWrap: 'wrap', marginBottom: 0 }}>
+            <div style={{ flex: 1, minWidth: '200px' }}>
+              <label htmlFor="competition-select">Soutěž</label>
+              <select
+                id="competition-select"
+                value={selectedCompetitionId}
+                onChange={(e) => setSelectedCompetitionId(e.target.value)}
+              >
+                <option value="">-- Vyberte soutěž --</option>
+                {competitions.map(competition => (
+                  <option key={competition.id} value={competition.id}>
+                    {getCompetitionLabel(competition)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={{ minWidth: '180px' }}>
+              <label htmlFor="category-filter">Kategorie</label>
+              <select
+                id="category-filter"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value as Category | '')}
+              >
+                <option value="">-- Všechny --</option>
+                {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+            </div>
+            {results && (
+              <button className="btn btn-primary" onClick={handleExportPdf} style={{ whiteSpace: 'nowrap' }}>
+                📄 Export PDF
+              </button>
+            )}
+          </div>
         </div>
-        <div style={{ minWidth: '200px' }}>
-          <label htmlFor="category-filter">Kategorie</label>
-          <select
-            id="category-filter"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value as Category | '')}
-          >
-            <option value="">-- Všechny --</option>
-            {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
+
+        {results && results.absoluteWinners.length > 0 && (
+          <div className="results-winner" style={{
+            padding: '1rem 1.5rem',
+            background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
+            color: 'white',
+            borderRadius: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}>
+            <h4 style={{ marginBottom: '0.3rem', fontSize: '1.1rem' }}>
+              🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (nerozhodnuto)' : 'Absolutní vítěz'}
+            </h4>
+            {results.absoluteWinners.map((winner, idx) => (
+              <p key={idx} style={{ fontSize: '1.15rem', marginBottom: idx < results.absoluteWinners.length - 1 ? '0.3rem' : 0 }}>
+                <strong>{winner.player.name}</strong> – {winner.result.total} bodů
+                {winner.result.rozstrel != null && (
+                  <span> (rozstřel: {winner.result.rozstrel})</span>
+                )}
+                <br />
+                <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
+              </p>
             ))}
-          </select>
-        </div>
-        {results && (
-          <button className="btn btn-primary" onClick={handleExportPdf}>
-            📄 Export PDF
-          </button>
+          </div>
         )}
       </div>
 
       {results && (
-        <div ref={printRef} style={{ marginTop: '2rem' }}>
-          <h3 style={{ marginBottom: '1rem', color: '#8b6914' }}>
-            {getCompetitionLabel(results.competition)}
-          </h3>
-
-          {results.absoluteWinners.length > 0 && (
-            <div style={{
-              marginBottom: '2rem',
-              padding: '1.5rem',
-              background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
-              color: 'white',
-              borderRadius: '10px'
-            }}>
-              <h4 style={{ marginBottom: '0.5rem' }}>
-                🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (nerozhodnuto)' : 'Absolutní vítěz'}
-              </h4>
-              {results.absoluteWinners.map((winner, idx) => (
-                <p key={idx} style={{ fontSize: '1.2rem', marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
-                  <strong>{winner.player.name}</strong> - {winner.result.total} bodů
-                  {winner.result.rozstrel != null && (
-                    <span> (rozstřel: {winner.result.rozstrel})</span>
-                  )}
-                  <br />
-                  <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
-                </p>
-              ))}
-            </div>
-          )}
+        <div ref={printRef} style={{ marginTop: '1rem' }}>
 
           {results.pools.some(p => p.ties.length > 0) && (
             <div style={{ marginBottom: '2rem' }}>
@@ -277,22 +283,22 @@ export function ViewResults() {
                 padding: '0.75rem',
                 border: '1px solid #e0e0e0',
               }}>
-                <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1rem', textAlign: 'center' }}>
+                <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1.2rem', textAlign: 'center' }}>
                   {CATEGORY_LABELS[category as Category]}
                 </h4>
                 {categoryResults.length === 0 ? (
                   <p style={{ color: '#999', textAlign: 'center', padding: '1rem 0' }}>Žádné výsledky</p>
                 ) : (
                   <div className="table-scroll">
-                  <table className="table" style={{ fontSize: '0.9rem' }}>
+                  <table className="table results-table">
                     <thead>
                       <tr>
-                        <th style={{ padding: '0.5rem' }}>#</th>
-                        <th style={{ padding: '0.5rem' }}>Jméno</th>
-                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>K1</th>
-                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>K2</th>
-                        <th style={{ padding: '0.5rem', textAlign: 'center' }}>∑</th>
-                        {hasAnyRozstrel && <th style={{ padding: '0.5rem', textAlign: 'center' }}>R</th>}
+                        <th>#</th>
+                        <th>Jméno</th>
+                        <th style={{ textAlign: 'center' }}>K1</th>
+                        <th style={{ textAlign: 'center' }}>K2</th>
+                        <th style={{ textAlign: 'center' }}>∑</th>
+                        {hasAnyRozstrel && <th style={{ textAlign: 'center' }}>R</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -304,20 +310,20 @@ export function ViewResults() {
 
                         return (
                           <tr key={item.player.id}>
-                            <td style={{ padding: '0.5rem', whiteSpace: 'nowrap' }}>
+                            <td style={{ whiteSpace: 'nowrap' }}>
                               {item.position === 1 && '🥇'}
                               {item.position === 2 && '🥈'}
                               {item.position === 3 && '🥉'}
                               {item.position > 3 && formatPosition(item.position, categoryResults)}
-                              {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.25rem', padding: '0.15rem 0.5rem', fontSize: '0.8rem' }}>
+                              {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.25rem', padding: '0.15rem 0.5rem' }}>
                                 {item.position}.
                               </span>}
                             </td>
-                            <td style={{ padding: '0.5rem' }}><strong>{item.player.name}</strong></td>
-                            <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
-                            <td style={{ padding: '0.5rem', textAlign: 'center' }}><strong>{item.result.total}</strong></td>
-                            {hasAnyRozstrel && <td style={{ padding: '0.5rem', textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
+                            <td><strong>{item.player.name}</strong></td>
+                            <td style={{ textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
+                            <td style={{ textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
+                            <td style={{ textAlign: 'center' }}><strong>{item.result.total}</strong></td>
+                            {hasAnyRozstrel && <td style={{ textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
                           </tr>
                         );
                       })}
