@@ -150,28 +150,29 @@ export function ViewResults() {
             background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
             color: 'white',
             borderRadius: '10px',
-            textAlign: 'center',
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '1.5rem',
           }}>
-            <h4 style={{ marginBottom: '0.4rem', fontSize: '1.2rem' }}>
+            <h4 style={{ fontSize: '1.5rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
               🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
             </h4>
-            {results.absoluteWinners.map((winner, idx) => (
-              <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.4rem' : 0 }}>
-                <p style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.15rem' }}>
-                  {winner.player.name}
-                </p>
-                <p style={{ fontSize: '1.15rem', marginBottom: '0.1rem' }}>
-                  {winner.result.total} bodů
-                  {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
-                </p>
-                <p style={{ fontSize: '0.9rem', opacity: 0.85 }}>
-                  {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
-                </p>
-              </div>
-            ))}
+            <div style={{ flex: 1 }}>
+              {results.absoluteWinners.map((winner, idx) => (
+                <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.4rem' : 0 }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                    {winner.player.name}
+                  </span>
+                  <span style={{ fontSize: '1.3rem', marginLeft: '0.75rem' }}>
+                    {winner.result.total} bodů
+                    {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
+                  </span>
+                  <span style={{ fontSize: '1rem', marginLeft: '0.75rem', opacity: 0.85 }}>
+                    {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -286,7 +287,7 @@ export function ViewResults() {
                 padding: '0.75rem',
                 border: '1px solid #e0e0e0',
               }}>
-                <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1.2rem', textAlign: 'center' }}>
+                <h4 style={{ marginBottom: '0.75rem', color: '#8b6914', fontSize: '1.4rem', textAlign: 'center' }}>
                   {CATEGORY_LABELS[category as Category]}
                 </h4>
                 {categoryResults.length === 0 ? (
