@@ -250,8 +250,8 @@ body {
 
 .results-top-bar {
   display: flex;
-  gap: 1.5rem;
-  align-items: stretch;
+  gap: 1rem;
+  align-items: flex-start;
   margin-bottom: 0.5rem;
 }
 
@@ -261,8 +261,10 @@ body {
 }
 
 .results-winner {
-  flex: 1;
-  min-width: 0;
+  flex: 0 0 auto;
+  width: 25%;
+  min-width: 220px;
+  max-width: 320px;
 }
 
 .results-categories {

@@ -148,26 +148,28 @@ export function ViewResults() {
 
         {results && results.absoluteWinners.length > 0 && (
           <div className="results-winner" style={{
-            padding: '1rem 1.5rem',
+            padding: '0.75rem 1rem',
             background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
             color: 'white',
             borderRadius: '10px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            textAlign: 'center',
           }}>
-            <h4 style={{ marginBottom: '0.3rem', fontSize: '1.1rem' }}>
-              🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové (nerozhodnuto)' : 'Absolutní vítěz'}
+            <h4 style={{ marginBottom: '0.3rem', fontSize: '0.95rem' }}>
+              🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
             </h4>
             {results.absoluteWinners.map((winner, idx) => (
-              <p key={idx} style={{ fontSize: '1.15rem', marginBottom: idx < results.absoluteWinners.length - 1 ? '0.3rem' : 0 }}>
-                <strong>{winner.player.name}</strong> – {winner.result.total} bodů
-                {winner.result.rozstrel != null && (
-                  <span> (rozstřel: {winner.result.rozstrel})</span>
-                )}
-                <br />
-                <small>({CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]})</small>
-              </p>
+              <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.3rem' : 0 }}>
+                <p style={{ fontSize: '1.05rem', fontWeight: 'bold', marginBottom: '0.1rem' }}>
+                  {winner.player.name}
+                </p>
+                <p style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>
+                  {winner.result.total} bodů
+                  {winner.result.rozstrel != null && ` (R: ${winner.result.rozstrel})`}
+                </p>
+                <p style={{ fontSize: '0.8rem', opacity: 0.85 }}>
+                  {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
+                </p>
+              </div>
             ))}
           </div>
         )}
