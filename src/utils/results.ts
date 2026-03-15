@@ -119,7 +119,7 @@ export function calculateResults(competitionId: string): CompetitionResults {
     return (b.result.rozstrel ?? 0) - (a.result.rozstrel ?? 0);
   });
 
-  const allEnrolledHaveScores = results.every(r => r.round1 !== null || r.round2 !== null);
+  const allEnrolledHaveScores = results.every(r => r.round1 !== null && r.round2 !== null);
   const hasUnresolvedTies = pools.some(p =>
     p.ties.some(t => t.players.some(pp => pp.result.rozstrel === null))
   );
