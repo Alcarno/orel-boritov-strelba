@@ -39,15 +39,27 @@ export function RegisterPlayer() {
     return players;
   }, [allPlayers, enrolledPlayerIds, enrollCategoryFilter]);
 
-  const enrolledList = useMemo(() => {
-    return enrolledResults
+  const enrolledByCategory = useMemo(() => {
+    const items = enrolledResults
       .map(r => {
         const player = storage.players.getById(r.playerId);
         return player ? { player, result: r } : null;
       })
-      .filter((item): item is { player: Player; result: Result } => item !== null)
-      .sort((a, b) => a.player.name.localeCompare(b.player.name, 'cs'));
+      .filter((item): item is { player: Player; result: Result } => item !== null);
+
+    const grouped: { category: Category; label: string; items: { player: Player; result: Result }[] }[] = [];
+    for (const [key, label] of Object.entries(CATEGORY_LABELS)) {
+      const catItems = items
+        .filter(i => (i.result.categoryAtTime || i.player.category) === key)
+        .sort((a, b) => a.player.name.localeCompare(b.player.name, 'cs'));
+      if (catItems.length > 0) {
+        grouped.push({ category: key as Category, label, items: catItems });
+      }
+    }
+    return grouped;
   }, [enrolledResults]);
+
+  const enrolledCount = enrolledByCategory.reduce((sum, g) => sum + g.items.length, 0);
 
   const matchingPlayers = useMemo(() => {
     if (name.trim().length < 2) return [];
@@ -312,56 +324,61 @@ export function RegisterPlayer() {
         {enrollCompetitionId && (
           <div style={{ marginTop: '1rem' }}>
             <h3 style={{ marginBottom: '0.75rem', color: '#8b6914' }}>
-              Přihlášení hráči ({enrolledList.length})
+              Přihlášení hráči ({enrolledCount})
             </h3>
-            {enrolledList.length === 0 ? (
+            {enrolledCount === 0 ? (
               <p style={{ color: '#999' }}>Zatím není přihlášen žádný hráč.</p>
             ) : (
-              <div className="table-scroll">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Jméno</th>
-                    <th>Kategorie</th>
-                    <th style={{ textAlign: 'center' }}>K1</th>
-                    <th style={{ textAlign: 'center' }}>K2</th>
-                    <th style={{ textAlign: 'center' }}>Celkem</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {enrolledList.map(({ player, result }) => {
-                    const hasScores = result.round1 !== null || result.round2 !== null;
-                    return (
-                      <tr key={result.id}>
-                        <td><strong>{player.name}</strong></td>
-                        <td>{CATEGORY_LABELS[result.categoryAtTime || player.category]}</td>
-                        <td style={{ textAlign: 'center' }}>{result.round1 ?? '–'}</td>
-                        <td style={{ textAlign: 'center' }}>{result.round2 ?? '–'}</td>
-                        <td style={{ textAlign: 'center' }}>{hasScores ? <strong>{result.total}</strong> : '–'}</td>
-                        <td style={{ textAlign: 'center' }}>
-                          {!hasScores && (
-                            <button
-                              onClick={() => handleUnenroll(player.id, result.id)}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                color: '#e53e3e',
-                                cursor: 'pointer',
-                                fontSize: '0.85rem',
-                                textDecoration: 'underline',
-                              }}
-                            >
-                              Odhlásit
-                            </button>
-                          )}
-                        </td>
+              enrolledByCategory.map(group => (
+                <div key={group.category} style={{ marginBottom: '1.5rem' }}>
+                  <h4 style={{ marginBottom: '0.5rem', color: '#8b6914', borderBottom: '1px solid #e6b422', paddingBottom: '0.25rem' }}>
+                    {group.label} ({group.items.length})
+                  </h4>
+                  <div className="table-scroll">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Jméno</th>
+                        <th style={{ textAlign: 'center' }}>K1</th>
+                        <th style={{ textAlign: 'center' }}>K2</th>
+                        <th style={{ textAlign: 'center' }}>Celkem</th>
+                        <th></th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {group.items.map(({ player, result }) => {
+                        const hasScores = result.round1 !== null || result.round2 !== null;
+                        return (
+                          <tr key={result.id}>
+                            <td>{hasScores ? <strong>{player.name}</strong> : player.name}</td>
+                            <td style={{ textAlign: 'center' }}>{result.round1 ?? '–'}</td>
+                            <td style={{ textAlign: 'center' }}>{result.round2 ?? '–'}</td>
+                            <td style={{ textAlign: 'center' }}>{hasScores ? <strong>{result.total}</strong> : '–'}</td>
+                            <td style={{ textAlign: 'center' }}>
+                              {!hasScores && (
+                                <button
+                                  onClick={() => handleUnenroll(player.id, result.id)}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#e53e3e',
+                                    cursor: 'pointer',
+                                    fontSize: '0.85rem',
+                                    textDecoration: 'underline',
+                                  }}
+                                >
+                                  Odhlásit
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              ))
             )}
           </div>
         )}

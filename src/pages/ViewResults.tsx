@@ -324,7 +324,7 @@ export function ViewResults() {
                           item.position === 3 ? 'badge-bronze' : '';
 
                         return (
-                          <tr key={item.player.id} style={!scored ? { color: '#aaa', fontStyle: 'italic' } : undefined}>
+                          <tr key={item.player.id}>
                             <td style={{ whiteSpace: 'nowrap' }}>
                               {scored ? (
                                 <>
@@ -336,7 +336,7 @@ export function ViewResults() {
                                     {item.position}.
                                   </span>}
                                 </>
-                              ) : '–'}
+                              ) : ''}
                             </td>
                             <td>{scored ? <strong>{item.player.name}</strong> : item.player.name}</td>
                             <td style={{ textAlign: 'center' }}>{item.result.round1 ?? '–'}</td>
