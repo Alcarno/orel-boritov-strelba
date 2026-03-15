@@ -144,35 +144,45 @@ export function ViewResults() {
           )}
         </div>
 
-        {results && results.absoluteWinners.length > 0 && (
+        {results && (
           <div className="results-winner" style={{
             padding: '1rem 1.5rem',
-            background: 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)',
-            color: 'white',
+            background: results.allResultsComplete && results.absoluteWinners.length > 0
+              ? 'linear-gradient(135deg, #e6b422 0%, #c99a2e 100%)'
+              : '#f0f0f0',
+            color: results.allResultsComplete && results.absoluteWinners.length > 0 ? 'white' : '#888',
             borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             gap: '1.5rem',
           }}>
-            <h4 style={{ fontSize: '1.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
-            </h4>
-            <div style={{ flex: 1 }}>
-              {results.absoluteWinners.map((winner, idx) => (
-                <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
-                  <span style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
-                    {winner.player.name}
-                  </span>
-                  <span style={{ fontSize: '1.5rem', marginLeft: '0.75rem' }}>
-                    {winner.result.total} bodů
-                    {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
-                  </span>
-                  <span style={{ fontSize: '1.1rem', marginLeft: '0.75rem', opacity: 0.85 }}>
-                    {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
-                  </span>
+            {results.allResultsComplete && results.absoluteWinners.length > 0 ? (
+              <>
+                <h4 style={{ fontSize: '1.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  🏆 {results.absoluteWinners.length > 1 ? 'Absolutní vítězové' : 'Absolutní vítěz'}
+                </h4>
+                <div style={{ flex: 1 }}>
+                  {results.absoluteWinners.map((winner, idx) => (
+                    <div key={idx} style={{ marginBottom: idx < results.absoluteWinners.length - 1 ? '0.5rem' : 0 }}>
+                      <span style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>
+                        {winner.player.name}
+                      </span>
+                      <span style={{ fontSize: '1.5rem', marginLeft: '0.75rem' }}>
+                        {winner.result.total} bodů
+                        {winner.result.rozstrel != null && ` (rozstřel: ${winner.result.rozstrel})`}
+                      </span>
+                      <span style={{ fontSize: '1.1rem', marginLeft: '0.75rem', opacity: 0.85 }}>
+                        {CATEGORY_LABELS[winner.result.categoryAtTime || winner.player.category]}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <div style={{ textAlign: 'center', width: '100%', fontSize: '1.1rem' }}>
+                🏆 Absolutní vítěz bude vyhlášen po zadání všech výsledků
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -307,27 +317,32 @@ export function ViewResults() {
                     </thead>
                     <tbody>
                       {categoryResults.map((item) => {
+                        const scored = item.result.round1 !== null || item.result.round2 !== null;
                         const badgeClass =
                           item.position === 1 ? 'badge-gold' :
                           item.position === 2 ? 'badge-silver' :
                           item.position === 3 ? 'badge-bronze' : '';
 
                         return (
-                          <tr key={item.player.id}>
+                          <tr key={item.player.id} style={!scored ? { color: '#aaa', fontStyle: 'italic' } : undefined}>
                             <td style={{ whiteSpace: 'nowrap' }}>
-                              {item.position === 1 && '🥇'}
-                              {item.position === 2 && '🥈'}
-                              {item.position === 3 && '🥉'}
-                              {item.position > 3 && formatPosition(item.position, categoryResults)}
-                              {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.25rem', padding: '0.15rem 0.5rem' }}>
-                                {item.position}.
-                              </span>}
+                              {scored ? (
+                                <>
+                                  {item.position === 1 && '🥇'}
+                                  {item.position === 2 && '🥈'}
+                                  {item.position === 3 && '🥉'}
+                                  {item.position > 3 && formatPosition(item.position, categoryResults)}
+                                  {badgeClass && <span className={`badge ${badgeClass}`} style={{ marginLeft: '0.25rem', padding: '0.15rem 0.5rem' }}>
+                                    {item.position}.
+                                  </span>}
+                                </>
+                              ) : '–'}
                             </td>
-                            <td><strong>{item.player.name}</strong></td>
-                            <td style={{ textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
-                            <td style={{ textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
-                            <td style={{ textAlign: 'center' }}><strong>{item.result.total}</strong></td>
-                            {hasAnyRozstrel && <td style={{ textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
+                            <td>{scored ? <strong>{item.player.name}</strong> : item.player.name}</td>
+                            <td style={{ textAlign: 'center' }}>{item.result.round1 ?? '–'}</td>
+                            <td style={{ textAlign: 'center' }}>{item.result.round2 ?? '–'}</td>
+                            <td style={{ textAlign: 'center' }}>{scored ? <strong>{item.result.total}</strong> : '–'}</td>
+                            {hasAnyRozstrel && <td style={{ textAlign: 'center' }}>{item.result.rozstrel ?? '–'}</td>}
                           </tr>
                         );
                       })}
@@ -351,7 +366,7 @@ export function ViewResults() {
             {getCompetitionLabel(results.competition)}
           </h2>
 
-          {results.absoluteWinners.length > 0 && (
+          {results.allResultsComplete && results.absoluteWinners.length > 0 && (
             <div style={{
               marginBottom: '1.5rem',
               padding: '1.25rem',

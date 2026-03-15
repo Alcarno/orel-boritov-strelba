@@ -66,6 +66,7 @@ export interface CompetitionResults {
     result: Result;
   }[];
   pools: PoolInfo[];
+  allResultsComplete: boolean;
 }
 
 export const CATEGORY_POOLS: { name: string; categories: [Category, Category] }[] = [

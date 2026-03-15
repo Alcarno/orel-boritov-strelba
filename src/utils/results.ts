@@ -6,8 +6,16 @@ function getSurname(name: string): string {
   return parts[parts.length - 1].toLowerCase();
 }
 
+function hasScores(result: Result): boolean {
+  return result.round1 !== null || result.round2 !== null;
+}
+
 function sortAndAssignPositions(resultsList: CategoryResult[]): void {
   resultsList.sort((a, b) => {
+    const aScored = hasScores(a.result);
+    const bScored = hasScores(b.result);
+    if (aScored !== bScored) return aScored ? -1 : 1;
+
     if (b.result.total !== a.result.total) return b.result.total - a.result.total;
     const rozA = a.result.rozstrel ?? 0;
     const rozB = b.result.rozstrel ?? 0;
@@ -16,8 +24,12 @@ function sortAndAssignPositions(resultsList: CategoryResult[]): void {
   });
 
   for (let i = 0; i < resultsList.length; i++) {
-    if (i === 0) {
-      resultsList[i].position = 1;
+    if (!hasScores(resultsList[i].result)) {
+      resultsList[i].position = 0;
+      continue;
+    }
+    if (i === 0 || !hasScores(resultsList[i - 1].result)) {
+      resultsList[i].position = i + 1;
       continue;
     }
     const prev = resultsList[i - 1];
@@ -107,8 +119,14 @@ export function calculateResults(competitionId: string): CompetitionResults {
     return (b.result.rozstrel ?? 0) - (a.result.rozstrel ?? 0);
   });
 
+  const allEnrolledHaveScores = results.every(r => r.round1 !== null || r.round2 !== null);
+  const hasUnresolvedTies = pools.some(p =>
+    p.ties.some(t => t.players.some(pp => pp.result.rozstrel === null))
+  );
+  const allResultsComplete = results.length > 0 && allEnrolledHaveScores && !hasUnresolvedTies;
+
   let absoluteWinners: { player: Player; result: Result }[] = [];
-  if (categoryWinners.length > 0) {
+  if (allResultsComplete && categoryWinners.length > 0) {
     const best = categoryWinners[0];
     absoluteWinners = categoryWinners.filter(
       item => item.result.total === best.result.total
@@ -121,6 +139,7 @@ export function calculateResults(competitionId: string): CompetitionResults {
     categoryResults,
     absoluteWinners,
     pools,
+    allResultsComplete,
   };
 }
 

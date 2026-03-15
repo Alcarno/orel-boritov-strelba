@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Category, Competition, Result, CATEGORY_LABELS, COMPETITION_TYPE_LABELS } from '../types';
 import { storage } from '../utils/storage';
 import { calculateResults } from '../utils/results';
@@ -32,6 +32,21 @@ export function AddResults() {
     if (!categoryFilter) return allPlayers;
     return allPlayers.filter(p => p.category === categoryFilter);
   }, [allPlayers, categoryFilter]);
+
+  useEffect(() => {
+    if (!competitionId || !playerId) return;
+    const existing = storage.results.getByCompetitionId(competitionId)
+      .find(r => r.playerId === playerId);
+    if (existing) {
+      setRound1(existing.round1 !== null ? existing.round1.toString() : '');
+      setRound2(existing.round2 !== null ? existing.round2.toString() : '');
+      setRozstrel(existing.rozstrel !== null ? existing.rozstrel.toString() : '');
+    } else {
+      setRound1('');
+      setRound2('');
+      setRozstrel('');
+    }
+  }, [competitionId, playerId]);
 
   const needsTiebreaker = useMemo(() => {
     if (!competitionId || !playerId) return false;
