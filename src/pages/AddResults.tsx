@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Category, Competition, Result, CATEGORY_LABELS, COMPETITION_TYPE_LABELS } from '../types';
 import { storage } from '../utils/storage';
 import { calculateResults } from '../utils/results';
+import { SearchableSelect } from '../components/SearchableSelect';
 
 const MASTER_PASSWORD = import.meta.env.VITE_MASTER_PASSWORD || '';
 
@@ -260,19 +261,17 @@ export function AddResults() {
 
         <div className="form-group">
           <label htmlFor="player">Hráč *</label>
-          <select
+          <SearchableSelect
             id="player"
             value={playerId}
-            onChange={(e) => setPlayerId(e.target.value)}
+            onChange={(val) => setPlayerId(val)}
+            placeholder="Začněte psát jméno hráče..."
             required
-          >
-            <option value="">-- Vyberte hráče --</option>
-            {filteredPlayers.map(player => (
-              <option key={player.id} value={player.id}>
-                {player.name} ({CATEGORY_LABELS[player.category]})
-              </option>
-            ))}
-          </select>
+            options={filteredPlayers.map(player => ({
+              value: player.id,
+              label: `${player.name} (${CATEGORY_LABELS[player.category]})`,
+            }))}
+          />
           {competitionId && enrolledPlayers.length === 0 && (
             <small style={{ color: '#e53e3e', display: 'block', marginTop: '0.25rem' }}>
               V této soutěži nejsou přihlášení žádní hráči. Nejprve přihlaste hráče v sekci Registrace.

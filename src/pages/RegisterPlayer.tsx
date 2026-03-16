@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Category, Player, Result, Competition, CATEGORY_LABELS, COMPETITION_TYPE_LABELS, ALLOWED_TRANSFERS } from '../types';
 import { storage } from '../utils/storage';
+import { SearchableSelect } from '../components/SearchableSelect';
 
 export function RegisterPlayer() {
   const [name, setName] = useState('');
@@ -303,18 +304,16 @@ export function RegisterPlayer() {
 
         <div className="form-group">
           <label htmlFor="enroll-player">Hráč *</label>
-          <select
+          <SearchableSelect
             id="enroll-player"
             value={enrollPlayerId}
-            onChange={(e) => setEnrollPlayerId(e.target.value)}
-          >
-            <option value="">-- Vyberte hráče --</option>
-            {availablePlayers.map(p => (
-              <option key={p.id} value={p.id}>
-                {p.name} ({CATEGORY_LABELS[p.category]})
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setEnrollPlayerId(val)}
+            placeholder="Začněte psát jméno hráče..."
+            options={availablePlayers.map(p => ({
+              value: p.id,
+              label: `${p.name} (${CATEGORY_LABELS[p.category]})`,
+            }))}
+          />
         </div>
 
         <button className="btn btn-primary" onClick={handleEnroll} style={{ marginBottom: '1.5rem' }}>
@@ -338,6 +337,7 @@ export function RegisterPlayer() {
                   <table className="table">
                     <thead>
                       <tr>
+                        <th style={{ textAlign: 'center', width: '2.5rem' }}>#</th>
                         <th>Jméno</th>
                         <th style={{ textAlign: 'center' }}>K1</th>
                         <th style={{ textAlign: 'center' }}>K2</th>
@@ -346,10 +346,11 @@ export function RegisterPlayer() {
                       </tr>
                     </thead>
                     <tbody>
-                      {group.items.map(({ player, result }) => {
+                      {group.items.map(({ player, result }, idx) => {
                         const hasScores = result.round1 !== null || result.round2 !== null;
                         return (
                           <tr key={result.id}>
+                            <td style={{ textAlign: 'center' }}>{idx + 1}</td>
                             <td>{hasScores ? <strong>{player.name}</strong> : player.name}</td>
                             <td style={{ textAlign: 'center' }}>{result.round1 ?? '–'}</td>
                             <td style={{ textAlign: 'center' }}>{result.round2 ?? '–'}</td>
