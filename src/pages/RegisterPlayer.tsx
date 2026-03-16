@@ -10,9 +10,18 @@ export function RegisterPlayer() {
   const [success, setSuccess] = useState('');
   const [transferOffer, setTransferOffer] = useState<{ existingPlayer: Player; targetCategory: Category } | null>(null);
 
-  const [enrollCompetitionId, setEnrollCompetitionId] = useState('');
-  const [enrollCategoryFilter, setEnrollCategoryFilter] = useState<Category | ''>('');
+  const [enrollCompetitionId, setEnrollCompetitionId] = useState(() => localStorage.getItem('enroll_competitionId') || '');
+  const [enrollCategoryFilter, setEnrollCategoryFilter] = useState<Category | ''>(() => (localStorage.getItem('enroll_categoryFilter') || '') as Category | '');
   const [enrollPlayerId, setEnrollPlayerId] = useState('');
+
+  const updateEnrollCompetition = (val: string) => {
+    setEnrollCompetitionId(val);
+    localStorage.setItem('enroll_competitionId', val);
+  };
+  const updateEnrollCategory = (val: Category | '') => {
+    setEnrollCategoryFilter(val);
+    localStorage.setItem('enroll_categoryFilter', val);
+  };
   const [enrollMessage, setEnrollMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [, setRefresh] = useState(0);
 
@@ -277,7 +286,7 @@ export function RegisterPlayer() {
           <select
             id="enroll-competition"
             value={enrollCompetitionId}
-            onChange={(e) => { setEnrollCompetitionId(e.target.value); setEnrollPlayerId(''); setEnrollMessage(null); }}
+            onChange={(e) => { updateEnrollCompetition(e.target.value); setEnrollPlayerId(''); setEnrollMessage(null); }}
           >
             <option value="">-- Vyberte soutěž --</option>
             {competitions.map(c => (
@@ -293,7 +302,7 @@ export function RegisterPlayer() {
           <select
             id="enroll-category-filter"
             value={enrollCategoryFilter}
-            onChange={(e) => { setEnrollCategoryFilter(e.target.value as Category | ''); setEnrollPlayerId(''); }}
+            onChange={(e) => { updateEnrollCategory(e.target.value as Category | ''); setEnrollPlayerId(''); }}
           >
             <option value="">-- Všechny kategorie --</option>
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => (

@@ -7,8 +7,17 @@ import { SearchableSelect } from '../components/SearchableSelect';
 const MASTER_PASSWORD = import.meta.env.VITE_MASTER_PASSWORD || '';
 
 export function AddResults() {
-  const [competitionId, setCompetitionId] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<Category | ''>('');
+  const [competitionId, setCompetitionId] = useState(() => localStorage.getItem('results_competitionId') || '');
+  const [categoryFilter, setCategoryFilter] = useState<Category | ''>(() => (localStorage.getItem('results_categoryFilter') || '') as Category | '');
+
+  const updateCompetition = (val: string) => {
+    setCompetitionId(val);
+    localStorage.setItem('results_competitionId', val);
+  };
+  const updateCategory = (val: Category | '') => {
+    setCategoryFilter(val);
+    localStorage.setItem('results_categoryFilter', val);
+  };
   const [playerId, setPlayerId] = useState('');
   const [round1, setRound1] = useState('');
   const [round2, setRound2] = useState('');
@@ -233,7 +242,7 @@ export function AddResults() {
           <select
             id="competition"
             value={competitionId}
-            onChange={(e) => { setCompetitionId(e.target.value); setShowPasswordPrompt(false); setPassword(''); }}
+            onChange={(e) => { updateCompetition(e.target.value); setShowPasswordPrompt(false); setPassword(''); }}
             required
           >
             <option value="">-- Vyberte soutěž --</option>
@@ -250,7 +259,7 @@ export function AddResults() {
           <select
             id="category-filter"
             value={categoryFilter}
-            onChange={(e) => { setCategoryFilter(e.target.value as Category | ''); setPlayerId(''); }}
+            onChange={(e) => { updateCategory(e.target.value as Category | ''); setPlayerId(''); }}
           >
             <option value="">-- Všechny kategorie --</option>
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
