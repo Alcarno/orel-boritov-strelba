@@ -12,6 +12,8 @@ function isValidPassword(input: string, competitionPassword: string | null): boo
 export function Management() {
   const [selectedPlayerId, setSelectedPlayerId] = useState('');
   const [deletePlayerId, setDeletePlayerId] = useState('');
+  const [editNamePlayerId, setEditNamePlayerId] = useState('');
+  const [editNameValue, setEditNameValue] = useState('');
   const [deleteResultPlayerId, setDeleteResultPlayerId] = useState('');
   const [deleteResultCompetitionId, setDeleteResultCompetitionId] = useState('');
   const [selectedCompetitionId, setSelectedCompetitionId] = useState('');
@@ -46,6 +48,24 @@ export function Management() {
     storage.players.update({ ...selectedPlayer, category: canTransfer });
     showMessage('success', `Hráč "${selectedPlayer.name}" převeden do ${CATEGORY_LABELS[canTransfer]}`);
     setSelectedPlayerId('');
+    forceRefresh();
+  };
+
+  const handleEditName = () => {
+    if (!editNamePlayerId) return;
+    const player = storage.players.getById(editNamePlayerId);
+    if (!player) return;
+    const newName = editNameValue.trim();
+    if (!newName) { showMessage('error', 'Jméno nesmí být prázdné'); return; }
+    if (newName === player.name) { showMessage('error', 'Jméno se nezměnilo'); return; }
+    const duplicate = storage.players.getAll().find(
+      p => p.id !== player.id && p.name.toLowerCase() === newName.toLowerCase()
+    );
+    if (duplicate) { showMessage('error', `Hráč "${newName}" již existuje`); return; }
+    storage.players.update({ ...player, name: newName });
+    showMessage('success', `Jméno změněno: "${player.name}" → "${newName}"`);
+    setEditNamePlayerId('');
+    setEditNameValue('');
     forceRefresh();
   };
 
@@ -145,6 +165,41 @@ export function Management() {
       <div className="card">
         <h2 style={{ marginBottom: '0.5rem' }}>Správa hráčů a výsledků</h2>
         <p style={{ color: '#666', marginBottom: '2rem' }}>Mazání hráčů, výsledků a přechod hráčů mezi kategoriemi.</p>
+
+        {/* Editovat jméno hráče */}
+        <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #e0e0e0' }}>
+          <h3 style={{ color: '#8b6914', marginBottom: '1rem' }}>Editovat jméno hráče</h3>
+          <div className="form-group">
+            <label htmlFor="edit-name-player">Vyberte hráče</label>
+            <select id="edit-name-player" value={editNamePlayerId} onChange={(e) => {
+              setEditNamePlayerId(e.target.value);
+              const p = storage.players.getById(e.target.value);
+              setEditNameValue(p ? p.name : '');
+            }} style={{ maxWidth: '400px' }}>
+              <option value="">-- Vyberte hráče --</option>
+              {players.map(p => (
+                <option key={p.id} value={p.id}>{p.name} ({CATEGORY_LABELS[p.category]})</option>
+              ))}
+            </select>
+          </div>
+          {editNamePlayerId && (
+            <div>
+              <div className="form-group">
+                <label htmlFor="edit-name-input">Nové jméno</label>
+                <input
+                  type="text"
+                  id="edit-name-input"
+                  value={editNameValue}
+                  onChange={(e) => setEditNameValue(e.target.value)}
+                  style={{ maxWidth: '400px' }}
+                />
+              </div>
+              <button className="btn btn-primary" onClick={handleEditName}>
+                Uložit jméno
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Smazat hráče */}
         <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid #e0e0e0' }}>

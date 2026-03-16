@@ -27,11 +27,19 @@ export function AddResults() {
     ? storage.competitions.getById(competitionId)
     : null;
 
-  const allPlayers = storage.players.getAll();
+  const enrolledPlayers = useMemo(() => {
+    if (!competitionId) return [];
+    const results = storage.results.getByCompetitionId(competitionId);
+    const playerIds = new Set(results.map(r => r.playerId));
+    return storage.players.getAll()
+      .filter(p => playerIds.has(p.id))
+      .sort((a, b) => a.name.localeCompare(b.name, 'cs'));
+  }, [competitionId]);
+
   const filteredPlayers = useMemo(() => {
-    if (!categoryFilter) return allPlayers;
-    return allPlayers.filter(p => p.category === categoryFilter);
-  }, [allPlayers, categoryFilter]);
+    if (!categoryFilter) return enrolledPlayers;
+    return enrolledPlayers.filter(p => p.category === categoryFilter);
+  }, [enrolledPlayers, categoryFilter]);
 
   useEffect(() => {
     if (!competitionId || !playerId) return;
@@ -78,6 +86,7 @@ export function AddResults() {
       const pos1 = entries[0];
       const pos2 = entries[1];
       const pos3 = entries.length > 2 ? entries[2] : null;
+      const pos4 = entries.length > 3 ? entries[3] : null;
 
       const isInvolved = (e: typeof pos1) => e.playerId === playerId;
 
@@ -86,6 +95,9 @@ export function AddResults() {
       }
       if (pos2 && pos3 && pos2.total === pos3.total) {
         if (isInvolved(pos2) || isInvolved(pos3)) return true;
+      }
+      if (pos3 && pos4 && pos3.total === pos4.total) {
+        if (isInvolved(pos3) || isInvolved(pos4)) return true;
       }
 
       return false;
@@ -261,6 +273,11 @@ export function AddResults() {
               </option>
             ))}
           </select>
+          {competitionId && enrolledPlayers.length === 0 && (
+            <small style={{ color: '#e53e3e', display: 'block', marginTop: '0.25rem' }}>
+              V této soutěži nejsou přihlášení žádní hráči. Nejprve přihlaste hráče v sekci Registrace.
+            </small>
+          )}
         </div>
 
         <div className="form-group">
@@ -299,7 +316,7 @@ export function AddResults() {
               max="50"
             />
             <small style={{ color: '#666', display: 'block', marginTop: '0.25rem' }}>
-              Shoda na 1.-3. místě – zadejte rozstřel pro rozlišení pořadí
+              Shoda na 1.–4. místě – zadejte rozstřel pro rozlišení pořadí
             </small>
           </div>
         )}
