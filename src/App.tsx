@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { RegisterPlayer } from './pages/RegisterPlayer';
@@ -8,12 +8,15 @@ import { ViewResults } from './pages/ViewResults';
 import { PlayerHistory } from './pages/PlayerHistory';
 import { Statistics } from './pages/Statistics';
 import { Management } from './pages/Management';
-import { initStorage } from './utils/storage';
+import { initStorage, refreshStorage, onStorageRefresh } from './utils/storage';
 import './App.css';
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [, setRefreshKey] = useState(0);
+
+  const forceRerender = useCallback(() => setRefreshKey(n => n + 1), []);
 
   useEffect(() => {
     initStorage()
@@ -23,6 +26,24 @@ function App() {
         setError(err.message || 'Nepodařilo se připojit k databázi');
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onStorageRefresh(forceRerender);
+    return unsubscribe;
+  }, [forceRerender]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      refreshStorage();
+    };
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refreshStorage();
+    });
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   if (loading) {

@@ -5,6 +5,17 @@ let playersCache: Player[] = [];
 let competitionsCache: Competition[] = [];
 let resultsCache: Result[] = [];
 
+let refreshListeners: Array<() => void> = [];
+
+export function onStorageRefresh(cb: () => void) {
+  refreshListeners.push(cb);
+  return () => { refreshListeners = refreshListeners.filter(l => l !== cb); };
+}
+
+function notifyRefresh() {
+  refreshListeners.forEach(cb => cb());
+}
+
 // DB row -> TypeScript object mappers
 
 function playerFromDb(row: Record<string, unknown>): Player {
@@ -89,6 +100,24 @@ export async function initStorage(): Promise<void> {
   playersCache = (playersRes.data || []).map(playerFromDb);
   competitionsCache = (competitionsRes.data || []).map(competitionFromDb);
   resultsCache = (resultsRes.data || []).map(resultFromDb);
+}
+
+export async function refreshStorage(): Promise<void> {
+  try {
+    const [playersRes, competitionsRes, resultsRes] = await Promise.all([
+      supabase.from('players').select('*'),
+      supabase.from('competitions').select('*'),
+      supabase.from('results').select('*'),
+    ]);
+
+    if (!playersRes.error) playersCache = (playersRes.data || []).map(playerFromDb);
+    if (!competitionsRes.error) competitionsCache = (competitionsRes.data || []).map(competitionFromDb);
+    if (!resultsRes.error) resultsCache = (resultsRes.data || []).map(resultFromDb);
+
+    notifyRefresh();
+  } catch (err) {
+    console.error('Storage refresh failed:', err);
+  }
 }
 
 export const storage = {
