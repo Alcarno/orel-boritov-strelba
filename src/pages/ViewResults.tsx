@@ -48,12 +48,12 @@ export function ViewResults() {
       pdfRef.current.style.zIndex = '9999';
       pdfRef.current.style.opacity = '1';
       pdfRef.current.style.pointerEvents = 'none';
-      const canvas = await html2canvas(pdfRef.current, { scale: 2, useCORS: true });
+      const canvas = await html2canvas(pdfRef.current, { scale: 1.5, useCORS: true });
       pdfRef.current.style.position = 'absolute';
       pdfRef.current.style.left = '-9999px';
       pdfRef.current.style.zIndex = '-1';
       pdfRef.current.style.opacity = '0';
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/jpeg', 0.85);
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const imgWidth = pageWidth - 20;
@@ -63,7 +63,7 @@ export function ViewResults() {
       const pageHeight = pdf.internal.pageSize.getHeight() - 20;
 
       if (imgHeight <= pageHeight) {
-        pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 10, yPos, imgWidth, imgHeight);
       } else {
         let remainingHeight = imgHeight;
         let srcY = 0;
@@ -75,9 +75,9 @@ export function ViewResults() {
           const ctx = sliceCanvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(canvas, 0, srcY, canvas.width, sliceCanvas.height, 0, 0, canvas.width, sliceCanvas.height);
-            const sliceData = sliceCanvas.toDataURL('image/png');
+            const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.85);
             if (srcY > 0) pdf.addPage();
-            pdf.addImage(sliceData, 'PNG', 10, 10, imgWidth, sliceHeight);
+            pdf.addImage(sliceData, 'JPEG', 10, 10, imgWidth, sliceHeight);
           }
           srcY += sliceCanvas.height;
           remainingHeight -= sliceHeight;
@@ -409,21 +409,28 @@ export function ViewResults() {
                     </tr>
                   </thead>
                   <tbody>
-                    {catResults.map((item) => (
+                    {catResults.map((item) => {
+                      const scored = item.result.round1 !== null || item.result.round2 !== null;
+                      return (
                       <tr key={item.player.id} style={{ borderBottom: '1px solid #e0e0e0' }}>
                         <td style={{ padding: '0.6rem' }}>
-                          {item.position === 1 && '🥇 '}
-                          {item.position === 2 && '🥈 '}
-                          {item.position === 3 && '🥉 '}
-                          {item.position}.
+                          {scored ? (
+                            <>
+                              {item.position === 1 && '🥇 '}
+                              {item.position === 2 && '🥈 '}
+                              {item.position === 3 && '🥉 '}
+                              {formatPosition(item.position, catResults)}
+                            </>
+                          ) : ''}
                         </td>
-                        <td style={{ padding: '0.6rem' }}><strong>{item.player.name}</strong></td>
-                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round1 ?? '-'}</td>
-                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round2 ?? '-'}</td>
-                        <td style={{ padding: '0.6rem', textAlign: 'center' }}><strong>{item.result.total}</strong></td>
-                        {hasAnyRozstrel && <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.rozstrel ?? '-'}</td>}
+                        <td style={{ padding: '0.6rem' }}>{scored ? <strong>{item.player.name}</strong> : item.player.name}</td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round1 ?? '–'}</td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.round2 ?? '–'}</td>
+                        <td style={{ padding: '0.6rem', textAlign: 'center' }}>{scored ? <strong>{item.result.total}</strong> : '–'}</td>
+                        {hasAnyRozstrel && <td style={{ padding: '0.6rem', textAlign: 'center' }}>{item.result.rozstrel ?? '–'}</td>}
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               )}
